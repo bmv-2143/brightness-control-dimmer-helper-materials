@@ -1,0 +1,9 @@
+{
+  "id": "git-overview-stripes",
+  "name": "Git Overview Stripes",
+  "version": "1.0.1",
+  "minAppVersion": "1.5.0",
+  "description": "Shows Git change markers in an overview stripe beside the editor scrollbar, similar to JetBrains IDEs.",
+  "author": "OpenAI",
+  "isDesktopOnly": true
+}

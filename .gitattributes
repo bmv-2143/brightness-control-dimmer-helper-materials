@@ -1,0 +1,34 @@
+# Normalize text in Git; use LF for documents and portable tool files.
+* text=auto
+.gitignore text eol=lf
+.gitattributes text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.canvas text eol=lf
+*.base text eol=lf
+*.txt text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.ps1 text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Attachments and preserved plugin distributions must remain binary.
+*.zip binary
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.mp3 binary
+*.mp4 binary
+
+# Preserve the exact bytes of the existing custom plugin installation snapshot.
+tools/obsidian/git-overview-stripes/installed/** -text

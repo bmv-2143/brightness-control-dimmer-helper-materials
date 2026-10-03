@@ -1,0 +1,48 @@
+/* Git Overview Stripes - JetBrains-style change overview beside the editor scrollbar */
+
+.cm-editor {
+  position: relative;
+}
+
+.git-overview-stripe {
+  --gos-width: 9px;
+  position: absolute;
+  top: 3px;
+  right: 2px;
+  bottom: 3px;
+  width: var(--gos-width);
+  z-index: 20;
+  pointer-events: none;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--background-primary) 70%, transparent);
+}
+
+.git-overview-marker {
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  min-height: 3px;
+  border-radius: 2px;
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 0.95;
+  box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent);
+}
+
+/* Familiar VCS colors: green = added, blue = modified, red = deleted. */
+.git-overview-marker-added {
+  background-color: #39a845;
+}
+
+.git-overview-marker-modified {
+  background-color: #3d8bfd;
+}
+
+.git-overview-marker-deleted {
+  background-color: #e05252;
+}
+
+.git-overview-marker:hover {
+  filter: brightness(1.2);
+  min-height: 5px;
+}

@@ -1,0 +1,17 @@
+# Obsidian: preserve only reviewed, portable configuration.
+/BCD-obsidian-vault/.obsidian/*
+!/BCD-obsidian-vault/.obsidian/app.json
+!/BCD-obsidian-vault/.obsidian/appearance.json
+!/BCD-obsidian-vault/.obsidian/hotkeys.json
+!/BCD-obsidian-vault/.obsidian/core-plugins.json
+!/BCD-obsidian-vault/.obsidian/community-plugins.json
+!/BCD-obsidian-vault/.obsidian/snippets/
+
+# Workspace, graph, themes, installed plugins and their data.json files
+# are excluded by the allowlist above. Custom plugin backups live in tools/.
+/BCD-obsidian-vault/.trash/
+
+# OS metadata.
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
