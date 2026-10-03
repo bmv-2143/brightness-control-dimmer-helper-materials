@@ -33,6 +33,7 @@
 5. Удалены из продуктовой группировки technical logger/generator/obsolete handler/workaround thread. У CAP/FEAT/LB нет номера, выведенного из filenames; объединений/удалений уже опубликованных ID не было, таблица перенумерации не требуется.
 6. У watcher отдельно подтверждён fixed list и отдельно недостаточное основание «реальный foreground»: LB-041 MEDIUM. Notification/show icon/FGS и runtime permission33 отделены от обещания бесконечного background.
 7. Test suites, declared components, onClick и external/widget/boot intents перепроверены. Кодовые API checks сопоставлены с P01–P09. Скрытые варианты/внешние приложения и OEM callbacks статически не исключены полностью.
+8. Заключительная сверка точных символов исправила сокращённые описательные имена методов в source-evidence на настоящие `fromPercentToSystemBrightness`, `updateBackgroundAlpha`, `queryInAppPurchaseStatus` и другие. Изменилось качество ссылок, не confidence фактов. У LB-019 уточнён второй вход notification request — `PermissionConfigurationActivity.runPermissionsCheck`, помимо icon checkbox. В Share обнаружен параметр ah; его отсутствие в TO-BE явно записано как CHANGE в DEC-026.
 
 Первый и второй проходы выполнены до первой публикации документов; они сохранены одним законченным коммитом. Исправления относятся к исследовательским выводам, не к исходникам. Confidence не повышался из-за будущих продуктовых решений.
 
