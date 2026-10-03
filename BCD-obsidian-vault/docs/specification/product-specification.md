@@ -1,0 +1,46 @@
+# Спецификация новой BCD
+
+Версия документов: 2026-10-04, частично завершённое согласование. Основание требований — [behavior-decisions](behavior-decisions.md), а не Legacy как утверждённая спецификация. 24 решения ADOPTED_BY_AGENT, подтверждений пользователя нет; boot и коммерческая модель PENDING_USER. Принятые независимые правила ниже готовы к review и последующей реализации. Они не доказывают работающую реализацию.
+
+## Назначение и границы
+
+BCD управляет системной ручной/автоматической яркостью и дополнительным затемнением поверх приложений. Доступ — панель, notification controls, домашние widgets. Сохраняются presets, настройка видимости, таймер завершения, защитное переключение и опциональное исключение overlay для фиксированных приложений. Чтение/запись системной настройки отличается от визуального эффекта экрана.
+
+В этой задаче созданы только документы и Gherkin — декларативные проверяемые примеры. Исполняемых acceptance-тестов (проверок приёмки), characterization tests (проверок поведения AS-IS), parser/generator/IR, Cucumber, новой инфраструктуры или архитектуры приложения нет. Custom exclusion list и отключённый Accessibility обходной путь не включены. Существующие store grants/paywalls/ads и reboot policy пока не утверждены.
+
+## Карта продукта
+
+| CAP | Features | Нормативный документ |
+|---|---|---|
+| CAP-001 Свет экрана | FEAT-001 manual, FEAT-002 overlay, FEAT-003 Auto, FEAT-004 шаг, FEAT-005 sync | [brightness-and-dimming](features/brightness-and-dimming.md) |
+| CAP-002 Настраиваемая панель | FEAT-006 presets, FEAT-007 panel | [controls-and-widgets](features/controls-and-widgets.md) |
+| CAP-003 Быстрый доступ | FEAT-008 notifications, FEAT-009 widgets | [controls-and-widgets](features/controls-and-widgets.md) |
+| CAP-004 Состояние/восстановление | FEAT-010 storage, FEAT-011 lifecycle (boot pending), FEAT-012 timer, FEAT-013 safety | [state-and-recovery](features/state-and-recovery.md) |
+| CAP-005 Доступы/исключения | FEAT-014 permissions, FEAT-015 fixed exclusions | [permissions-and-exclusions](features/permissions-and-exclusions.md) |
+| CAP-006 Коммерческая доступность | FEAT-016 Premium, FEAT-017 promotion, FEAT-018 ads — PENDING_USER | [Открытые Q](behavior-decisions.md) |
+| CAP-007 Информация | FEAT-019 help, FEAT-020 share | [help-and-constraints](features/help-and-constraints.md) |
+| CAP-008 Понятный интерфейс | FEAT-021 locale/accessibility, общие ограничения | [help-and-constraints](features/help-and-constraints.md) |
+
+## Термины и общий контракт
+
+- **p** — целое логическое значение BCD -75..100; не процент физической luminance. Auto — отдельный режим, не число диапазона.
+- **raw** — значение `Settings.System.SCREEN_BRIGHTNESS` в документированной шкале1..255. Manual mapping BCD использует floor и защитный порог12. Настройка ОС может иметь OEM-особенности.
+- **overlay** — чёрное окно дополнительного затемнения; alpha определяет непрозрачность, а не мощность подсветки. Отрицательное p не отрицательная системная яркость.
+- **requested state** — последняя принятая пользовательская цель; **observed state** — прочитанный режим/raw ОС и факт активного/приостановленного overlay. UI должен различать цель, отказ и действующее состояние.
+- **sync** — синхронизация с внешними изменениями ОС; defaulttrue. Own-write echo — уведомление ОС о собственной записи BCD — не внешняя команда.
+- **recreation** — пересоздание Activity/процесса в пределах текущей загрузки устройства; не reboot и не force-stop.
+- **deadline** — сохранённый момент истечения таймера в текущей загрузке; доставка ОС может опоздать. Таймер не обещает точного выполнения во сне.
+
+Все управляющие поверхности используют одну продуктовую семантику значения/режима/ошибки, но сохраняют свои presets/steps. Любая команда применяется с текущими разрешениями; интерфейс не объявляет неподтверждённый результат успехом. При partial failure отображается, что удалось изменить и что не удалось; скрытого rollback обещания нет. Ограничение ОС на запуск/окно — наблюдаемый отказ, а не числовая настройка BCD.
+
+Правила оплаты/доступа не подразумеваются: «редактор доступен» в примере задаёт предусловие, не бесплатность или Premium. Нерешённые ветви не исполняются как acceptance.
+
+## Платформенные и нефункциональные границы
+
+Min API26, compile/target37, Kotlin/Compose/Material3 и toolchain уже заданы новым проектом (DEC-028); template и архивный ViewModel не требования архитектуры. Поддержать en/ru, доступные labels/errors и user control channel importance. Основные команды света не требуют сети. Нет выдуманных latency/FPS/coverage/энергопотребления SLA.
+
+Официальные ограничения P01–P09 собраны в [source-evidence](source-evidence.md). Не обещаются покрытие status bar/IME/protected windows, бесконечная работа service, точное распознавание foreground по UsageStats, физическая калибровка яркости или принятый магазином FGS type. Если platform feasibility не подтвердится, соответствующее решение надо пересмотреть до выпуска, сохранив историю.
+
+## Незавершённые зависимости
+
+Q-001 блокирует только boot и timer/state через reboot. Q-002 блокирует monetization, прежние лицензии и paywall availability, но не семантику доступного editor. G01–G08 остаются открытыми discovery/runtime gaps. Связи и будущие проверки будут в traceability/test-plan; наличие файлов не означает наличие executable tests.
