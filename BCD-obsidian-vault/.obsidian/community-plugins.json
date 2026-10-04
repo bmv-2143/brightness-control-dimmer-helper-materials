@@ -7,5 +7,6 @@
   "editor-width-slider",
   "templater-obsidian",
   "obsidian-linter",
-  "obsidian-vault-changelog"
+  "obsidian-vault-changelog",
+  "reveal-active-file-button"
 ]
