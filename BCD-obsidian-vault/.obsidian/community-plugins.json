@@ -8,5 +8,6 @@
   "templater-obsidian",
   "obsidian-linter",
   "obsidian-vault-changelog",
-  "reveal-active-file-button"
+  "reveal-active-file-button",
+  "gherkin-editor"
 ]
