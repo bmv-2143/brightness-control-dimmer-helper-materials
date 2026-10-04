@@ -11,6 +11,9 @@
 # are excluded by the allowlist above. Custom plugin backups live in tools/.
 /BCD-obsidian-vault/.trash/
 
+# Generated list of recently edited notes; keep it local.
+/BCD-obsidian-vault/Changelog.md
+
 # OS metadata.
 .DS_Store
 Thumbs.db
