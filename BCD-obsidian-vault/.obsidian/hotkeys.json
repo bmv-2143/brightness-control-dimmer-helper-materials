@@ -15,5 +15,25 @@
       ],
       "key": "F1"
     }
+  ],
+  "window:zoom-in": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Meta"
+      ],
+      "key": "I"
+    }
+  ],
+  "window:zoom-out": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Meta"
+      ],
+      "key": "O"
+    }
   ]
 }
