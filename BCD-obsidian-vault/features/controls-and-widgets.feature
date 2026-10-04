@@ -1,4 +1,5 @@
 # language: en
+# Общий глоссарий: ../docs/specification/glossary.md
 Feature: Настраиваемые управляющие поверхности BCD
 
   Rule: RULE-008 Разные наборы presets имеют подтверждённые defaults

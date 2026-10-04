@@ -1,4 +1,5 @@
 # language: en
+# Общий глоссарий: ../docs/specification/glossary.md
 Feature: Согласованное управление системной яркостью и затемнением
 
   Rule: RULE-001 Допустимая числовая шкала

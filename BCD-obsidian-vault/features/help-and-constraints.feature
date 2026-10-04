@@ -1,4 +1,5 @@
 # language: en
+# Общий глоссарий: ../docs/specification/glossary.md
 Feature: Понятный интерфейс и заданные границы платформы
 
   Rule: RULE-032 Help объясняет реальное поведение

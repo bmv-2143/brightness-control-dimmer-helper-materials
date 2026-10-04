@@ -1,5 +1,7 @@
 # Журнал решений о поведении новой версии
 
+[Глоссарий: термины и обозначения](glossary.md). Местные пояснения сохраняют тот же смысл.
+
 Основание: [инвентаризация](legacy-behavior-inventory.md), [проверенные источники E/P](source-evidence.md). KEEP сохраняет значимое поведение, CHANGE меняет его, DROP исключает его или механизм, INVESTIGATE оставляет ветвь нерешённой. Решения не изменяют confidence фактов Legacy.
 
 ## Незакрытые вопросы и review агента
@@ -35,7 +37,7 @@
 | DEC-021 INVESTIGATE, PENDING_USER | CAP-006/FEAT-016; LB-045–LB-046: Premium/restore/gates | Сохранить Premium / всё бесплатно / другая модель → Q-002, не выбрано | Неизвестны пользовательская коммерческая политика и обращение с существующими лицензиями. Ни billing, ни paywall не нормативны; технический billing compatibility позже G06 |
 | DEC-022 INVESTIGATE, PENDING_USER | CAP-006/FEAT-017; LB-047: installed game unlock независимо flag | Сохранить game unlock / отказаться / прежние grants только → Q-002, не выбрано | Промо-игра и лицензии внешние, предпочтение не следует из кода. Нет RULE/SCN |
 | DEC-023 INVESTIGATE, PENDING_USER | CAP-006/FEAT-018; LB-048: editor/settings banner | Сохранить ads / убрать / отдельное решение → Q-002, не выбрано | Скрытие banner не доказывает no ads network; analytics/Crashlytics также не принимаются автоматически. Нет RULE/SCN |
-| DEC-024 CHANGE, ADOPTED_BY_AGENT | CAP-007/FEAT-019; LB-049: six help pages/неверные promises | Copy text/layout либо сохранить назначение → first help once и manual reopen, объяснить scale/Auto/dim/safety/access/widgets/timer без ложных guarantees. E35/E37/P06; вопрос не нужен | Не фиксировать6экранов/порядок UI как требование. ROLE accessible text. RULE-032 |
+| DEC-024 CHANGE, ADOPTED_BY_AGENT | CAP-007/FEAT-019; LB-049: six help pages/неверные promises | Copy text/layout либо сохранить назначение → first help once и manual reopen, объяснить scale/Auto/dim/safety/access/widgets/timer без ложных guarantees. E35/E37/P06; вопрос не нужен | Не фиксировать6экранов/порядок UI как требование. Текст помощи должен быть доступен пользователям. RULE-032 |
 | DEC-025 DROP, ADOPTED_BY_AGENT | CAP-007/FEAT-019; LB-050: secret grants/revoke | Keep hidden debug paywall switch либо убрать → убрать secret taps из пользовательской справки. E35/E30; вопрос не нужен: неподтверждённый backdoor не требование | Не определяет будущее legitimate Premium Q-002. Нет RULE/SCN; TEST-044 |
 | DEC-026 CHANGE, ADOPTED_BY_AGENT | CAP-007/FEAT-020; LB-051: share store link с параметром ah | Убрать share / передавать данные / сохранить ссылку → системный chooser text/plain с канонической ссылкой BCD Google Play по тому же package ID, без ah. E36/E38; вопрос не нужен: сохраняется назначение share, дополнительный параметр не пользовательская возможность | Не обещать действующий listing или установленный receiver; отсутствие handler сообщается без crash; Amazon variant не принимается автоматически. RULE-033 |
 | DEC-027 CHANGE, ADOPTED_BY_AGENT | CAP-008/FEAT-021; LB-052: en/ru/errors | Copy all legacy text либо en/ru accurate accessible messaging → сохранить en/ru, содержательные errors/состояния, доступные labels control. E37, TESTING.md accessibility; вопрос не нужен | Нет новых языков/метрик performance; перевод не меняет numeric semantics. RULE-034 |

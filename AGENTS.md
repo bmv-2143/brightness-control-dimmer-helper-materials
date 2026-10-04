@@ -39,6 +39,22 @@ automatic commit/push/pull and pull on startup disabled while Codex works here.
 Its all-changes operations cover the entire repository, including files outside
 the vault. Do not run modifying Git operations concurrently from other clients.
 
+## Поддержание глоссария
+
+Общий справочник терминов спецификации находится в
+[glossary.md](BCD-obsidian-vault/docs/specification/glossary.md).
+При изменении документов `BCD-obsidian-vault/docs/specification/` или Gherkin
+`BCD-obsidian-vault/features/` сохраняйте местные определения и согласуйте их
+с глоссарием. Новые существенные термины поясняйте при первом использовании и
+добавляйте в справочник со ссылкой на точный контекст. Если меняется смысл,
+одновременно обновляйте местные определения, глоссарий и затронутые связи;
+изменение поведения требует записи DEC и пересмотра зависимых RULE/SCN/TEST.
+Глоссарий не принимает продуктовые решения и не подтверждает испытания.
+Каждый документ спецификации должен ссылаться на справочник; в `.feature`
+достаточен короткий комментарий после первой строки `# language: en`.
+Перед коммитом сверяйте термины по фактическому употреблению, различайте
+неоднозначные сокращения, проверяйте ссылки и сохраняйте стабильные ID.
+
 ## Verification and Git
 
 Inspect git status and active Git hooks before editing or committing. Preserve

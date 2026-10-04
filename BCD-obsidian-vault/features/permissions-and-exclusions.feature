@@ -1,4 +1,5 @@
 # language: en
+# Общий глоссарий: ../docs/specification/glossary.md
 Feature: Доступы Android и временное исключение затемнения
 
   Rule: RULE-016 Разрешения соответствуют выбранной возможности

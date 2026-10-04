@@ -1,4 +1,5 @@
 # language: en
+# Общий глоссарий: ../docs/specification/glossary.md
 Feature: Сохранение настроек и безопасное завершение затемнения
 
   Rule: RULE-023 Первое открытие не меняет свет
