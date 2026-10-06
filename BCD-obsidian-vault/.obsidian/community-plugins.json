@@ -9,5 +9,7 @@
   "obsidian-linter",
   "obsidian-vault-changelog",
   "reveal-active-file-button",
-  "gherkin-editor"
+  "gherkin-editor",
+  "git-file-explorer-colors",
+  "git-file-explorer"
 ]
