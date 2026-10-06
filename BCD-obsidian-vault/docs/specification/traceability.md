@@ -2,9 +2,9 @@
 
 [Глоссарий: термины и обозначения](glossary.md). Местные пояснения сохраняют тот же смысл.
 
-Источники: [инвентаризация](legacy-behavior-inventory.md), [решения](behavior-decisions.md), [спецификация](product-specification.md), [план](test-plan.md). RULE определены в5 документах [features](features/brightness-and-dimming.md); SCN — в5 файлах `../../features/*.feature`. TEST — только запланированная проверка, не существующий/пройденный тест.
+Источники: [инвентаризация](legacy-behavior-inventory.md), [решения](behavior-decisions.md), [спецификация](product-specification.md), [план](test-plan.md). RULE определены в6 документах [features](features/brightness-and-dimming.md); SCN — в6 файлах `../../features/*.feature`. TEST — только запланированная проверка, не существующий/пройденный тест.
 
-Диапазоны в таблице включительны. В строке с несколькими SCN каждый соответствует одноимённому номеру TEST; это явная связь документов, не автоматическое исполнение Gherkin. Некоторые проверки разделяют несколько LB, общую логику и платформенный эффект.
+Диапазоны в таблице включительны. SCN-001–SCN-043 соответствуют одноимённым TEST; добавленные SCN-044–SCN-050 соответствуют TEST-053–TEST-059 по явной таблице ниже, поскольку TEST-044–TEST-052 уже заняты дополнительными проверками. Это связь документов, не автоматическое исполнение Gherkin. Некоторые проверки разделяют несколько LB, общую логику и платформенный эффект.
 
 | LB | DEC | FEAT | RULE | SCN | TEST |
 |---|---|---|---|---|---|
@@ -52,10 +52,10 @@
 | LB-042 | DEC-018 | FEAT-015 | RULE-031 | SCN-039 | TEST-039,TEST-049 |
 | LB-043 | DEC-019 | FEAT-015 | DROP: partial custom selector; fixed list сохранён | — | TEST-044 |
 | LB-044 | DEC-020 | FEAT-015 | DROP: disabled Accessibility workaround; exclusions сохранены | — | TEST-044 |
-| LB-045 | DEC-021 | FEAT-016 | INVESTIGATE, Q-002 PENDING_USER | — | После Q-002: лицензии/purchase/restore; сейчас нет утверждённого теста |
-| LB-046 | DEC-021 | FEAT-016 | INVESTIGATE, Q-002 PENDING_USER | — | Семантика доступного editor покрыта TEST-013–TEST-015; paywall не принят |
-| LB-047 | DEC-022 | FEAT-017 | INVESTIGATE, Q-002 PENDING_USER | — | После Q-002: game entitlement, не нормативная ветвь |
-| LB-048 | DEC-023 | FEAT-018 | INVESTIGATE, Q-002 PENDING_USER | — | После Q-002: banner/network policy, не нормативная ветвь |
+| LB-045 | DEC-021 | FEAT-016 | RULE-036,RULE-040 | SCN-044–SCN-045,SCN-049–SCN-050 | TEST-053–TEST-054,TEST-058–TEST-059 |
+| LB-046 | DEC-021 | FEAT-016 | RULE-037 | SCN-046 | TEST-055; editor semantics TEST-013–TEST-015 |
+| LB-047 | DEC-022 | FEAT-017 | RULE-038 | SCN-047 | TEST-056 |
+| LB-048 | DEC-023 | FEAT-018 | RULE-039,RULE-040 | SCN-048–SCN-049 | TEST-057–TEST-058 |
 | LB-049 | DEC-024 | FEAT-019 | RULE-032 | SCN-040 | TEST-040 |
 | LB-050 | DEC-025 | FEAT-019 | DROP: hidden Premium taps | — | TEST-040,TEST-044 |
 | LB-051 | DEC-026 | FEAT-020 | RULE-033 | SCN-041 | TEST-041 |
@@ -71,10 +71,11 @@
 | Permissions/exclusions | [RULE-016–RULE-018,RULE-030–RULE-031](features/permissions-and-exclusions.md) | [SCN-022–SCN-025,SCN-038–SCN-039](../../features/permissions-and-exclusions.feature) |
 | State/timer/safety | [RULE-023–RULE-029](features/state-and-recovery.md) | [SCN-031–SCN-037](../../features/state-and-recovery.feature) |
 | Help/constraints | [RULE-032–RULE-035](features/help-and-constraints.md) | [SCN-040–SCN-043](../../features/help-and-constraints.feature) |
+| Монетизация | [RULE-036–RULE-040](features/monetization.md) | [SCN-044–SCN-050](../../features/monetization.feature) |
 
 ## Проверка документов
 
-43 уникальных SCN,35 уникальных RULE, один Feature и `# language: en` в каждом из5 файлов. SCN и FEAT заданы tags; RULE ID в названии Rule. Начальные состояния, границы, ошибки, повторные действия и таблицы Examples проверены вручную. Все Examples имеют соответствующие placeholders и согласованные результаты по принятой формуле.
+После ответа 2026-10-05:50 уникальных SCN,40 уникальных RULE, один Feature и `# language: en` в каждом из6 файлов. SCN и FEAT заданы tags; RULE ID в названии Rule. Новые SCN-044–SCN-050 связаны с TEST-053–TEST-059. Начальные состояния/Examples проверены вручную; это не запуск acceptance и не машинная parser-валидация.
 
 Готовый Gherkin parser не найден в доступных MCP tools, Python runtime, bundled Node modules и пользовательских global npm modules. Библиотеки не устанавливались. Машинная проверка текстовых ссылок/ID/числа Feature не является parser-валидацией Gherkin; синтаксис подтверждён только ручным просмотром. Будущий parser check — TEST-051, до автоматического исполнения сценариев. Никакого собственного parser не создавалось.
 

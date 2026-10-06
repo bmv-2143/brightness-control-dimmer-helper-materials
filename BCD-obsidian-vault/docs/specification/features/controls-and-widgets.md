@@ -2,7 +2,7 @@
 
 [Глоссарий: термины и обозначения](../glossary.md). Местные пояснения сохраняют тот же смысл.
 
-CAP-002/CAP-003. Семантика света общая с [brightness-and-dimming](brightness-and-dimming.md). Доступность платных настроек не решена Q-002: примеры editor/visibility задают, что операция доступна.
+CAP-002/CAP-003. Семантика света общая с [brightness-and-dimming](brightness-and-dimming.md). Q-002 закрыт: доступность платных настроек задают RULE-036–RULE-038 в [monetization](monetization.md). Примеры editor/visibility ниже предполагают соответствующее действительное право.
 
 | RULE / Feature / DEC | Формулировка, применимость и результат | Необходимые примеры |
 |---|---|---|
