@@ -77,3 +77,19 @@
 Процент здесь относится к условной шкале BCD. При принятой шкале ОС255 minimum request равен floor(255*5/100)=12; это не пять raw units и не измеренные5% luminance. Сведения об этих моделях не доказывают распространённость дефекта или достаточность того же порога на современных устройствах.
 
 Для будущей идеи проверки с откатом существенны [ограничения доставки alarms](https://developer.android.com/develop/background-work/services/alarms) и [фонового запуска FGS](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start). Inexact alarm может задержаться; возможность восстановить настройки после прекращения процесса требует отдельной проверки. Эти источники не подтверждают готовый гарантированный механизм отката.
+
+
+## Повторная проверка единиц minimum —2026-10-07
+
+Legacy HEAD cd7696cd04705fa48a2c115addf98ae6191bfdd9, без изменения исходников.
+`BrightnessControlDimmer/src/main/java/net/humblegames/brightnesscontroldimmer/screen/brightness/MaxMinBrightness.java:15,23–24`:
+MIN_SAFE_BRIGHTNESS_PERCENT=5; getMinimumDevicesSafeBrightness вычисляет M*5/100
+с integer division. При стандартном M255 результат raw12, не raw5.
+`service/BrightnessState.java:164–169` в том же package prefix применяет этот
+minimum к p<=5, иначе p*M/100. Это активная цепочка установки.
+`screen/overlay/OverlayDrawer.java:219–223` использует SAFETY_MIN_BRIGHTNESS/100.0f,
+то есть0.05; `utils/Const.java:54–60` прямо обозначает проценты и активное5.
+Старые комментарии о3 не меняют константу5.
+`screen/brightness/BrightnessUtils.java:89–92` — отдельный helper с Math.round,
+который дал бы13 при5%/M255; он не подменяет integer formula активной цепочки.
+Подтверждены единицы и округление исходного кода, не физическая яркость устройства.

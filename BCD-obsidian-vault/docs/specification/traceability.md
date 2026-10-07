@@ -4,7 +4,7 @@
 
 Источники: [инвентаризация](legacy-behavior-inventory.md), [решения](behavior-decisions.md), [спецификация](product-specification.md), [план](test-plan.md). RULE определены в6 документах [features](features/brightness-and-dimming.md); SCN — в6 файлах `../../features/*.feature`. TEST — только запланированная проверка, не существующий/пройденный тест.
 
-Диапазоны в таблице включительны. SCN-001–SCN-043 соответствуют одноимённым TEST; добавленные SCN-044–SCN-054 соответствуют TEST-053–TEST-063 по явной таблице ниже, поскольку TEST-044–TEST-052 уже заняты дополнительными проверками. Это связь документов, не автоматическое исполнение Gherkin. Некоторые проверки разделяют несколько LB, общую логику и платформенный эффект.
+Диапазоны в таблице включительны. SCN-001–SCN-043 соответствуют одноимённым TEST; добавленные SCN-044–SCN-059 соответствуют TEST-053–TEST-068 по явной таблице ниже, поскольку TEST-044–TEST-052 уже заняты дополнительными проверками. Это связь документов, не автоматическое исполнение Gherkin. Некоторые проверки разделяют несколько LB, общую логику и платформенный эффект.
 
 | LB | DEC | FEAT | RULE | SCN | TEST |
 |---|---|---|---|---|---|
@@ -36,7 +36,7 @@
 | LB-026 | DEC-011 | FEAT-009 | RULE-022; DROP только keyguard17..20 mechanism | SCN-030 | TEST-030,TEST-044,TEST-046 |
 | LB-027 | DEC-012 | FEAT-010 | RULE-024 | SCN-032 | TEST-032,TEST-046 |
 | LB-028 | DEC-012 | FEAT-010 | RULE-023 | SCN-031 | TEST-031 |
-| LB-029 | DEC-013 частично принят | FEAT-011/FEAT-012 | RULE-041–RULE-042; остальные параметры Q-001 PENDING_USER | SCN-051–SCN-054 | TEST-060–TEST-063 |
+| LB-029 | DEC-013 частично принят | FEAT-011/FEAT-012 | RULE-041–RULE-046; отказ Auto/записи Q-001 PENDING_USER | SCN-051–SCN-059 | TEST-060–TEST-068 |
 | LB-030 | DEC-014 | FEAT-011 | RULE-025 | SCN-033 | TEST-033,TEST-047 |
 | LB-031 | DEC-015 | FEAT-011 | DROP: forced crash restart, storage сохранено | — | TEST-044 |
 | LB-032 | DEC-016 | FEAT-012 | RULE-026 | SCN-034 | TEST-034 |
@@ -69,13 +69,13 @@
 | Свет | [RULE-001–RULE-007](features/brightness-and-dimming.md) | [SCN-001–SCN-011](../../features/brightness-and-dimming.feature) |
 | Controls/widgets | [RULE-008–RULE-015,RULE-019–RULE-022](features/controls-and-widgets.md) | [SCN-012–SCN-021,SCN-026–SCN-030](../../features/controls-and-widgets.feature) |
 | Permissions/exclusions | [RULE-016–RULE-018,RULE-030–RULE-031](features/permissions-and-exclusions.md) | [SCN-022–SCN-025,SCN-038–SCN-039](../../features/permissions-and-exclusions.feature) |
-| State/timer/safety | [RULE-023–RULE-029,RULE-041–RULE-042](features/state-and-recovery.md) | [SCN-031–SCN-037,SCN-051–SCN-054](../../features/state-and-recovery.feature) |
+| State/timer/safety | [RULE-023–RULE-029,RULE-041–RULE-046](features/state-and-recovery.md) | [SCN-031–SCN-037,SCN-051–SCN-059](../../features/state-and-recovery.feature) |
 | Help/constraints | [RULE-032–RULE-035](features/help-and-constraints.md) | [SCN-040–SCN-043](../../features/help-and-constraints.feature) |
 | Монетизация | [RULE-036–RULE-040](features/monetization.md) | [SCN-044–SCN-050](../../features/monetization.feature) |
 
 ## Проверка документов
 
-После ответов 2026-10-05/06:54 уникальных SCN,42 уникальных RULE, один Feature и `# language: en` в каждом из6 файлов. SCN и FEAT заданы tags; RULE ID в названии Rule. Новые SCN-044–SCN-054 связаны с TEST-053–TEST-063. Начальные состояния/Examples проверены вручную; это не запуск acceptance и не машинная parser-валидация.
+После ответов 2026-10-05–07:59 уникальных SCN,46 уникальных RULE, один Feature и `# language: en` в каждом из6 файлов. SCN и FEAT заданы tags; RULE ID в названии Rule. Новые SCN-044–SCN-059 связаны с TEST-053–TEST-068. Начальные состояния/Examples проверены вручную; это не запуск acceptance и не машинная parser-валидация.
 
 Готовый Gherkin parser не найден в доступных MCP tools, Python runtime, bundled Node modules и пользовательских global npm modules. Библиотеки не устанавливались. Машинная проверка текстовых ссылок/ID/числа Feature не является parser-валидацией Gherkin; синтаксис подтверждён только ручным просмотром. Будущий parser check — TEST-051, до автоматического исполнения сценариев. Никакого собственного parser не создавалось.
 
