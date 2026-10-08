@@ -14,7 +14,7 @@
 | LB-004 | DEC-003 | FEAT-003 | RULE-004 | SCN-006 | TEST-006 |
 | LB-005 | DEC-004 | FEAT-004 | RULE-006 | SCN-009 | TEST-009 |
 | LB-006 | DEC-003 | FEAT-003 | RULE-005 | SCN-007–SCN-008 | TEST-007–TEST-008 |
-| LB-007 | DEC-005 | FEAT-005 | RULE-007 | SCN-010–SCN-011 | TEST-010–TEST-011 |
+| LB-007 | DEC-005 CONFIRMED_BY_USER | FEAT-005 | RULE-007 | SCN-010–SCN-011 | TEST-010–TEST-011 |
 | LB-008 | DEC-006 | FEAT-006 | RULE-008 | SCN-012 | TEST-012 |
 | LB-009 | DEC-006 | FEAT-006 | RULE-009 | SCN-013–SCN-015 | TEST-013–TEST-015 |
 | LB-010 | DEC-006 | FEAT-006 | RULE-008,RULE-009 | SCN-012–SCN-015 | TEST-012–TEST-015 |
@@ -34,8 +34,8 @@
 | LB-024 | DEC-011 | FEAT-009 | RULE-020 | SCN-027 | TEST-027 |
 | LB-025 | DEC-011 | FEAT-009 | RULE-021 | SCN-029 | TEST-029 |
 | LB-026 | DEC-011 | FEAT-009 | RULE-022; DROP только keyguard17..20 mechanism | SCN-030 | TEST-030,TEST-044,TEST-046 |
-| LB-027 | DEC-012 | FEAT-010 | RULE-024 | SCN-032 | TEST-032,TEST-046 |
-| LB-028 | DEC-012 | FEAT-010 | RULE-023 | SCN-031 | TEST-031 |
+| LB-027 | DEC-012, RULE-024 ещё PROPOSAL | FEAT-010 | RULE-024 | SCN-032 | TEST-032,TEST-046 |
+| LB-028 | DEC-012 CONFIRMED_BY_USER только RULE-023 | FEAT-010 | RULE-023 | SCN-031 | TEST-031 |
 | LB-029 | DEC-013 CONFIRMED_BY_USER | FEAT-011/FEAT-012 | RULE-041–RULE-048; Q-001 CLOSED_BY_USER | SCN-051–SCN-062 | TEST-060–TEST-071 |
 | LB-030 | DEC-014 | FEAT-011 | RULE-025 | SCN-033 | TEST-033,TEST-047 |
 | LB-031 | DEC-015 | FEAT-011 | DROP: forced crash restart, storage сохранено | — | TEST-044 |
@@ -87,3 +87,11 @@
 | Идея пользователя о будущем опыте с подтверждением и откатом; в Legacy не реализована | DEC-030 INVESTIGATE, CONFIRMED_BY_USER только как кандидат будущей работы | Связана с CAP-001/FEAT-001; нового принятого Feature нет | Нет утверждённого RULE/SCN; текущий floor действует | TEST-052 — будущая оценка реализуемости, не acceptance кандидата |
 
 После дополнения35 RULE/43 SCN сохранены, Examples SCN-003 расширены.52 TEST: первый51 с прежними ID, TEST-052 отдельно исследовательский. Историческое свидетельство не повышает confidence runtime-результата Legacy; молчание не подтверждает возможность диагностики.
+
+## Подтверждение двух пунктов —2026-10-08
+
+RULE-007/SCN-010–SCN-011/TEST-010–TEST-011 и RULE-023/SCN-031/TEST-031
+подтверждены как поведение, не как выполненные испытания. Принято также отсутствие
+повторной команды/снятия активного overlay при обычном открытии.
+RULE-024/SCN-032/TEST-032/TEST-046 и RULE-025/SCN-033/TEST-033/TEST-047
+остаются на review: открытие не означает принятия recreation/повтордоставки.

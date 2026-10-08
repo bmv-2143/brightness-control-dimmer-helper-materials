@@ -117,7 +117,7 @@ RULE-041–RULE-048 приняты пользователем; Q-001 закры�
 
 Сверено с `BrightnessControlDimmer/TESTING.md`, `app/build.gradle.kts`, `gradle/libs.versions.toml`, AGENTS/QUALITY/MODERNIZATION на HEAD `87ef042e62c7a671fa4babfc932d27b55086efb1`: JVM Jupiter безVintage; AndroidJUnit4/AndroidJUnitRunner/ActivityScenario, UIAutomator2.4.0; accessibility34+; min26/target37/JDK21; Kover только JVM, без coverage gate. Template tests не проверяют свет. CLI/CI команды здесь не выполнялись.
 
-Порядок: после закрытия Q-001/Q-002 провести review остальных24 решений и сохранить историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
+Порядок: после закрытия Q-001/Q-002 провести review остальных22 решений и неподтверждённой части RULE-024, сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
 
 Использовать dedicated devices без существующей Legacy установки, одинаковый applicationId может уничтожить чужие данные; migration только на отдельной копии. Выбирать `ANDROID_SERIAL`, не AGP `--serial`; не запускать конкурирующие Gradle builds. После будущих запусков проверять непустые XML results/failed/skipped, не только exitcode; reports оставить по TESTING.md. Подписи/productionversion/магазин/billinginfra решить в дальнейшей работе. Настоящий test implementation и все результаты ещё отсутствуют.
 
@@ -152,3 +152,12 @@ RULE-041–RULE-048 приняты пользователем; Q-001 закры�
 |---|---|---|
 | TEST-070 / SCN-061 | При установленном отказе актуальной Auto boot цели и доступной manual записи одна резервная попытка25/raw63 без overlay. Сохранённая policy Auto не меняется, UI сообщает фактический резерв. Успех записи не доказывает физическую яркость | L: fake Auto failure/manual success/readback и recording actions; A/U: настоящий manual mode/raw и краткое состояние результата на isolated device. Не требовать несуществующего универсального OEM detector |
 | TEST-071 / SCN-062 | НетWRITE/неизвестный результат Auto/новая цель40→нет reserve; reserve write failure→одна отказавшая попытка, без цикла/overlay/ложного успеха. Неизвестная поддержка не блокирует попытку Auto, задержка unlock не запускает reserve; repeated callback одной операции не умножает reserve | L: четыре Outline rows, fake permissions/read faults/stale events, число эффектов; A: grants/readback/lifecycle при технической реализуемости. Всего71 TEST; это план, не запуск |
+
+## Статус согласования —2026-10-08
+
+TEST-010–TEST-011 (внешняя синхронизация) и TEST-031 (обычное открытие)
+проверяют принятое пользователем поведение. В TEST-031 учитывать повторное
+открытие с действующим overlay (не снимать его и не менять deadline) и с уже
+прекратившимся (не отображать старую цель как работающий overlay).
+TEST-032/TEST-046 (recreation/миграция) и TEST-033/TEST-047 (повтордоставка)
+этим ответом не подтверждены. Все перечисленные TEST запланированы, не выполнены.
