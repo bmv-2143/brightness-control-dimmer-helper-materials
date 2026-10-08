@@ -2,13 +2,13 @@
 
 [Глоссарий: термины и обозначения](glossary.md). Местные пояснения сохраняют тот же смысл.
 
-Версия документов: 2026-10-08, частично завершённое согласование. Основание требований — [behavior-decisions](behavior-decisions.md), а не Legacy как утверждённая спецификация. 24 решения ADOPTED_BY_AGENT;5 CONFIRMED_BY_USER: DEC-021–DEC-023 коммерческая политика и ограниченные DEC-029/DEC-030. Q-002 закрыт; reboot Q-001 уточняется после частичного ответа. Принятые правила готовы к review и последующей реализации; они не доказывают работающую реализацию.
+Версия документов: 2026-10-08, частично завершённое согласование. Основание требований — [behavior-decisions](behavior-decisions.md), а не Legacy как утверждённая спецификация. 24 решения ADOPTED_BY_AGENT;6 CONFIRMED_BY_USER: DEC-013 reboot-контракт, DEC-021–DEC-023 коммерческая политика и ограниченные DEC-029/DEC-030. Q-001/Q-002 закрыты; остаётся review остальных24 решений агента. Принятые правила готовы к review и последующей реализации; они не доказывают работающую реализацию.
 
 ## Назначение и границы
 
 BCD управляет системной ручной/автоматической яркостью и дополнительным затемнением поверх приложений. Доступ — панель, notification controls, домашние widgets. Сохраняются presets, настройка видимости, таймер завершения, защитное переключение и опциональное исключение overlay для фиксированных приложений. Чтение/запись системной настройки отличается от визуального эффекта экрана.
 
-В этой задаче созданы только документы и Gherkin — декларативные проверяемые примеры. Исполняемых acceptance-тестов (проверок приёмки), characterization tests (проверок поведения AS-IS), parser/generator/IR, Cucumber, новой инфраструктуры или архитектуры приложения нет. Custom exclusion list и отключённый Accessibility обходной путь не включены. Premium/restore, прежние gates, game promotion и AdMob приняты; точная reboot policy ещё уточняется. Подписка только будущий задел, другие магазины вне обязательного первого выпуска.
+В этой задаче созданы только документы и Gherkin — декларативные проверяемые примеры. Исполняемых acceptance-тестов (проверок приёмки), characterization tests (проверок поведения AS-IS), parser/generator/IR, Cucumber, новой инфраструктуры или архитектуры приложения нет. Custom exclusion list и отключённый Accessibility обходной путь не включены. Premium/restore, прежние gates, game promotion и AdMob приняты; reboot-контракт принят по RULE-041–RULE-048, техническая реализуемость ещё проверяется. Подписка только будущий задел, другие магазины вне обязательного первого выпуска.
 
 ## Карта продукта
 
@@ -17,7 +17,7 @@ BCD управляет системной ручной/автоматическ�
 | CAP-001 Свет экрана | FEAT-001 manual, FEAT-002 overlay, FEAT-003 Auto, FEAT-004 шаг, FEAT-005 sync | [brightness-and-dimming](features/brightness-and-dimming.md) |
 | CAP-002 Настраиваемая панель | FEAT-006 presets, FEAT-007 panel | [controls-and-widgets](features/controls-and-widgets.md) |
 | CAP-003 Быстрый доступ | FEAT-008 notifications, FEAT-009 widgets | [controls-and-widgets](features/controls-and-widgets.md) |
-| CAP-004 Состояние/восстановление | FEAT-010 storage, FEAT-011 lifecycle (boot pending), FEAT-012 timer, FEAT-013 safety | [state-and-recovery](features/state-and-recovery.md) |
+| CAP-004 Состояние/восстановление | FEAT-010 storage, FEAT-011 lifecycle (boot contract принят), FEAT-012 timer, FEAT-013 safety | [state-and-recovery](features/state-and-recovery.md) |
 | CAP-005 Доступы/исключения | FEAT-014 permissions, FEAT-015 fixed exclusions | [permissions-and-exclusions](features/permissions-and-exclusions.md) |
 | CAP-006 Коммерческая доступность | FEAT-016 Premium/restore, FEAT-017 promotion, FEAT-018 AdMob; первая версия Google Play | [monetization](features/monetization.md) |
 | CAP-007 Информация | FEAT-019 help, FEAT-020 share | [help-and-constraints](features/help-and-constraints.md) |
@@ -35,7 +35,7 @@ BCD управляет системной ручной/автоматическ�
 
 Все управляющие поверхности используют одну продуктовую семантику значения/режима/ошибки, но сохраняют свои presets/steps. Любая команда применяется с текущими разрешениями; интерфейс не объявляет неподтверждённый результат успехом. При partial failure отображается, что удалось изменить и что не удалось; скрытого rollback обещания нет. Ограничение ОС на запуск/окно — наблюдаемый отказ, а не числовая настройка BCD.
 
-«Редактор доступен» в прежнем примере задаёт предусловие; его основание теперь определяется RULE-036–RULE-038: действительный бессрочный Premium или game promotion. Нерешённые reboot-ветви не исполняются как acceptance. RULE-040 не обещает уже работающие будущие SDK/подписку.
+«Редактор доступен» в прежнем примере задаёт предусловие; его основание теперь определяется RULE-036–RULE-038: действительный бессрочный Premium или game promotion. Принятые reboot-ветви пока описаны декларативными сценариями, не исполняемыми acceptance-тестами. RULE-040 не обещает уже работающие будущие SDK/подписку.
 
 ## Платформенные и нефункциональные границы
 
@@ -45,7 +45,7 @@ Min API26, compile/target37, Kotlin/Compose/Material3 и toolchain уже зад
 
 ## Незавершённые зависимости
 
-Q-001 блокирует точный boot и timer/state через reboot. Согласованы Auto default и опциональный overlay с выключенным default в «Последнем режиме BCD»; 2026-10-06 подтверждён режим «Заданная яркость». Overlay после первой разблокировки и исходное окончание таймера через reboot подтверждены в RULE-041–RULE-042. 2026-10-07 приняты единый процентный minimum5, fixed5..100/шаг1/initial25, ранняя защита до unlock и правило недостоверного срока без технических подробностей в UI: RULE-043–RULE-046. Ранняя защита не меняет raw>=minimum, но выбранная boot policy после unlock применяется отдельно. 2026-10-08 принят отказ/частичное применение записи по RULE-047; остальные ветви блока, включая резервные25 при отказе Auto, ещё открыты; технический алгоритм и runtime feasibility остаются для плана и проверок. Q-002 закрыт, но G06/store sandbox, signed upgrade и реальное восстановление прежних покупок не проверены. Доступность продаж/рекламы личным Play/AdMob аккаунтам — проверка перед реальными интеграционными испытаниями и выпуском, а не условие архитектуры или плана. Google-региональные ограничения могут повлиять на доступность новых продаж; это не отменяет требование сохранения старого Premium. G01–G08 остаются открытыми runtime gaps. Связи и будущие проверки — в traceability/test-plan; наличие файлов не означает executable tests. См. [подготовку](../workflows/full-rewrite-preparation.md) и [исследование провайдеров](../workflows/monetization-provider-research.md).
+Q-001/Q-002 CLOSED_BY_USER. Reboot-контракт и упрощённый резерв после отказа Auto задаются RULE-041–RULE-048. 24 ADOPTED_BY_AGENT решения остальных функций требуют review. Технический алгоритм часов, Direct Boot/FGS/OEM, G01–G08/store sandbox/signed upgrade/реальный restore ещё не проверены; принятие поведения не доказывает эти механизмы. Доступность продаж/рекламы личным аккаунтам — проверка перед интеграционными испытаниями/выпуском, не условие архитектуры. [Обзор отличий](../workflows/legacy-differences-review.md), [подготовка](../workflows/full-rewrite-preparation.md) и [монетизация](../workflows/monetization-provider-research.md).
 
 ## Уточнение защиты и кандидат будущей работы
 
