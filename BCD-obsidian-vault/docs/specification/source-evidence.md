@@ -164,3 +164,79 @@ DEC-001 теперь CONFIRMED_BY_USER: по умолчанию255, требов
 или универсальности; аппаратную шкалу backlight нельзя автоматически считать
 шкалой Settings. User workflow: изучать не только что, но почему в Legacy;
 обходы/источники/устройства фиксировать всегда, не копировать без согласования.
+
+## Причины и нюансы таймера/защитного снятия —2026-10-09
+
+Повторно проверены E05/E23/E24 на указанном Legacy HEAD. Ниже статические
+наблюдения и история, не результаты device tests и не принятие DEC-016/DEC-017.
+
+**Таймер.** `J/utils/Const.java:90` задаёт initial index5, то есть3h;
+`J/ui/DimmerOffTimeoutSelectorDialog.java:31–38,79–86` задаёт30min..24h
+с шагом30min. Enable default false проверяется в
+`J/service/DimmerService.java:811–838`. Каждое применение negative, даже того
+же числа, вызывает cancel/set нового alarm; Auto и неотрицательная команда
+отменяют alarm (`:696–702,733–746,793–807`). Это отсчёт от последнего применения
+negative, а не только первого включения overlay. Авторский отдельный мотив
+каждого reset в истории не установлен; комментарий прямо называет действие reset.
+Назначение функции в `R/values-ru/strings.xml:121–123` — убрать дополнительное
+затемнение по окончании ожидания; полученная команда фактически запрашивает Auto
+(`J/utils/Utils.java:716–748`, `J/service/DimmerService.java:453–461`).
+
+Коммит `c6147632cfbb9e617a723cf02df25f81fa0e559a` от2015-03-29 намеренно заменил
+ELAPSED_REALTIME_WAKEUP на ELAPSED_REALTIME; сообщение и комментарии говорят
+не будить устройство. Более конкретная причина выбора (например, жалоба или
+измерение батареи) не найдена. Текущий код использует `AlarmManager.set`,
+`SystemClock.elapsedRealtime()` и non-wakeup alarm. По [AlarmManager](https://developer.android.com/reference/android/app/AlarmManager)
+set неточен сAPI19, не доставляется раньше срока и может задерживаться;
+ELAPSED_REALTIME учитывает сон, но не будит устройство. Это сохранение назначения
+обхода, не гарантия запуска текущего service PendingIntent на target37.
+Debug путь index+1 секунд (`DimmerService.java:826–832`, `Utils.java:815–829`)
+служит ускорению: `T/SettingsActivityTest.java:825–893` отдельно использует эти
+секунды и затем новую negative команду. Старые тесты в этой работе не запускались.
+
+Сохранение нового index в `J/ui/settings/FragmentSettings.java:263–276` меняет
+preference/summary; `J/ui/SharedPreferencesChangeListener.java:33–82` не имеет
+ветки duration key. Поэтому само редактирование длительности не пересчитывает
+уже назначенный alarm; следующее применение negative читает новое значение.
+Enable/disable checkbox, напротив, отменяет при disable и повторно отправляет
+сохранённую яркость через service. Предлагаемый немедленный rearm при сохранении
+изменённой active duration — отдельное изменение, а не доказанное Legacy поведение.
+
+`DimmerOffTimeoutSelectorDialog.java:25,58–63,79–96` хранит nullable progress,
+назначает listener после initial setProgress и вызывает один callback на любой
+dismiss. Сдвиг slider с последующим Back тоже сохраняет значение; отдельной
+семантики Cancel нет. Без сдвига callback может получить null, который caller
+распаковывает в int: кандидат NPE, не воспроизведённый сбой. Коммит
+`fe9f6f8b92ee28357fca7ad705dac1b2a9ecc309` от2021-11-30 добавил явный dismiss
+в onPause для другого NPE при быстром двойном Back и завершении Activity.
+Этот исторический lifecycle обход не исправляет nullable progress автоматически.
+
+**Защитное снятие.** Мотив прямо указан в `R/values-ru/strings.xml`,
+`help_page6_content1`: выйти из темноты на яркий свет и снять плохо видимый
+overlay без поиска экранной кнопки. Коммит
+`ce80fa4b3be947d05ab487526ce32eead5b87e13` от2019-02-07 связывает gesture
+с Auto при включённом overlay; коммит
+`789808a4cbf90fb23df6ee6ebca7630718cb2010` от2021-11-17 меняет соседний порог
+1000→1250ms и текст справки4→5s. Четыре события дают три проверяемых промежутка:
+максимум3750ms между первым и четвёртым при неизменных часах и этом алгоритме.
+Например0,1500,3000,4500ms укладываются в общие5s, но не проходят соседний порог.
+
+Текущий receiver (`J/broadcasts/ScreenOnOffBroadCastReceiver.java:38–103`)
+не проверяет hardware источник, обязательное чередование или наличие negative
+overlay. Service регистрирует его в onCreate и без проверки negative отправляет
+Auto (`J/service/DimmerService.java:243–274`, `J/utils/Utils.java:860–870`).
+Следовательно, четыре подходящих события могут перевести в Auto и положительную
+ручную яркость, пока receiver активен. Это расхождение с заявленным назначением,
+которое нельзя молча исправить или представить как negative-only контракт.
+По [Intent](https://developer.android.com/reference/android/content/Intent#ACTION_SCREEN_ON)
+SCREEN_ON/OFF отражают общее состояние взаимодействия с устройством, не прямое
+нажатие кнопки и не обязательно физическое включение/выключение дисплея.
+Они принимаются динамически зарегистрированным receiver.
+
+Legacy сравнивает `System.currentTimeMillis()`, чувствительный к переводу часов.
+Для измерения коротких интервалов [SystemClock](https://developer.android.com/reference/android/os/SystemClock)
+рекомендует монотонный elapsedRealtime, учитывающий сон. Выбор часов — будущая
+техническая задача; эта запись не меняет согласованный reboot-контракт.
+Устройств/OEM обходов специально для этих функций в просмотренных источниках
+не выявлено; точность gesture, задержки доставки и выполнение Auto требуют
+проверки на устройстве. DEC-016/DEC-017 остаются ADOPTED_BY_AGENT, ждут review.

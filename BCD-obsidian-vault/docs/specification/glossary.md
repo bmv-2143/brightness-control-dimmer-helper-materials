@@ -144,7 +144,7 @@
 | Manifest, entry point | Объявление компонентов/permissions и точка входа действия. Класс без достижимого входа не доказывает Feature. [E13](source-evidence.md). |
 | Activity, service, receiver, provider | Экранный компонент, служба, получатель событий, поставщик/компонент provider по контексту. Widget provider обрабатывает события host. |
 | Intent, extras, action, PendingIntent, identity | Сообщение о действии, дополнительные данные, имя действия, будущее действие ОС, признаки идентичности. Разные extras не доказывают разные PendingIntent. [E20](source-evidence.md). |
-| MAIN/LAUNCHER, BOOT_COMPLETED, SCREEN_ON/OFF | Launcher-вход и события загрузки/включения/выключения экрана. SCREEN_ON/OFF не доказывают нажатие физической кнопки. [E13/E21/E24](source-evidence.md). |
+| MAIN/LAUNCHER, BOOT_COMPLETED, SCREEN_ON/OFF | Launcher-вход, событие загрузки и события перехода устройства в состояние взаимодействия/выхода из него. Исторические названия SCREEN_ON/OFF не доказывают физическое включение дисплея или нажатие кнопки. В защитном Legacy gesture считаются четыре события с соседними интервалами<=1250ms, а не общий предел5s. [E13/E21/E24 и исследование причин](source-evidence.md#причины-и-нюансы-таймеразащитного-снятия-2026-10-09). |
 | ACTION_SEND, EXTRA_TEXT/SUBJECT | Отправка содержимого и поля текста/темы. SUBJECT сокращает `Intent.EXTRA_SUBJECT`, не отдельную константу. [E36](source-evidence.md). |
 | CLOSE_SYSTEM_DIALOGS | Сокращение `Intent.ACTION_CLOSE_SYSTEM_DIALOGS`; не любая команда закрытия BCD. [E16/P06](source-evidence.md). |
 | IMMUTABLE, UPDATE_CURRENT | Сокращения PendingIntent-флагов `FLAG_IMMUTABLE`, `FLAG_UPDATE_CURRENT`. Не состояния/статусы. [E20/E22](source-evidence.md). |
