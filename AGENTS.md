@@ -81,3 +81,15 @@ Committed-by: Codex
 This marker identifies who performed the commit operation, not who authored all
 included content. Do not apply it automatically to manual or Obsidian commits.
 Do not rewrite history, add a remote or push unless requested.
+
+## Legacy: inspect the reason before proposing a change
+
+Before presenting behavior or compatibility changes for user approval, inspect
+both what Legacy does and why: comments, call sites, Git history and linked
+original sources where useful. Preserve discovered device-specific behavior,
+workarounds, evidence and uncertainty in source-evidence.md even when the rewrite
+will not reuse the workaround. Do not copy a nonstandard workaround into the new
+app or discard its compatibility purpose without explicit user agreement.
+Distinguish historical reports from reproduced results and a product requirement
+from its still-undecided implementation. This workflow was explicitly requested
+by the user on 2026-10-09 after the brightness reflection review.
