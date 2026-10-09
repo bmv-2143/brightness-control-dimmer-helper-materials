@@ -8,8 +8,8 @@
 
 | LB | DEC | FEAT | RULE | SCN | TEST |
 |---|---|---|---|---|---|
-| LB-001 | DEC-001 | FEAT-001 | RULE-001 | SCN-001–SCN-002 | TEST-001–TEST-002 |
-| LB-002 | DEC-001 | FEAT-001 | RULE-002 | SCN-003 | TEST-003,TEST-045,TEST-048 |
+| LB-001 | DEC-001 CONFIRMED_BY_USER, default255/OEM совместимость | FEAT-001 | RULE-001 | SCN-001–SCN-002 | TEST-001–TEST-002 |
+| LB-002 | DEC-001 CONFIRMED_BY_USER, default255/OEM совместимость | FEAT-001 | RULE-002 | SCN-003 | TEST-003,TEST-045,TEST-048 |
 | LB-003 | DEC-002 CONFIRMED_BY_USER; численный перенос принят2026-10-09 | FEAT-002 | RULE-003 | SCN-004–SCN-005 | TEST-004–TEST-005,TEST-048 |
 | LB-004 | DEC-003 CONFIRMED_BY_USER | FEAT-003 | RULE-004 | SCN-006 | TEST-006 |
 | LB-005 | DEC-004 | FEAT-004 | RULE-006 | SCN-009 | TEST-009 |
@@ -113,3 +113,11 @@ RULE-024/SCN-032/TEST-032 и часть TEST-046 о prefs upgrade приняты
 Перенос negative presets из DEC-002 связан с RULE-024: сохранить числа,
 не применять автоматически при upgrade, однократное краткое сообщение.
 Все SCN/TEST запланированы, не выполнялись. DEC-001 ещё на review.
+
+## Подтверждён default255 и требование OEM совместимости —2026-10-09
+
+RULE-001–RULE-002/SCN-001–SCN-003/TEST-001–TEST-003 подтверждены для default255;
+нестандартная совместимость — принятое требование с будущей технической проверкой.
+E04/реестр устройств связывает мотив с преобразованиями step/sync/boot/floor.
+Новых OEM алгоритмов, RULE/SCN/TEST ID или результатов испытаний нет.
+Группы1–2 закрыты; DEC-016/DEC-017 — следующий review.

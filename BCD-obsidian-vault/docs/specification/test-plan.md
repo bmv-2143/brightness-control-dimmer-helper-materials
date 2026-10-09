@@ -117,7 +117,7 @@ RULE-041–RULE-048 приняты пользователем; Q-001 закры�
 
 Сверено с `BrightnessControlDimmer/TESTING.md`, `app/build.gradle.kts`, `gradle/libs.versions.toml`, AGENTS/QUALITY/MODERNIZATION на HEAD `87ef042e62c7a671fa4babfc932d27b55086efb1`: JVM Jupiter безVintage; AndroidJUnit4/AndroidJUnitRunner/ActivityScenario, UIAutomator2.4.0; accessibility34+; min26/target37/JDK21; Kover только JVM, без coverage gate. Template tests не проверяют свет. CLI/CI команды здесь не выполнялись.
 
-Порядок: после закрытия Q-001/Q-002 провести review остальных18 решений, включая DEC-001 о шкале/reflection, сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
+Порядок: после закрытия Q-001/Q-002 провести review остальных17 решений в группах3–7, сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
 
 Использовать dedicated devices без существующей Legacy установки, одинаковый applicationId может уничтожить чужие данные; migration только на отдельной копии. Выбирать `ANDROID_SERIAL`, не AGP `--serial`; не запускать конкурирующие Gradle builds. После будущих запусков проверять непустые XML results/failed/skipped, не только exitcode; reports оставить по TESTING.md. Подписи/productionversion/магазин/billinginfra решить в дальнейшей работе. Настоящий test implementation и все результаты ещё отсутствуют.
 
@@ -191,3 +191,12 @@ TEST-032 и часть TEST-046 о сохранении prefs/recovery тепе�
 совместимости и согласовать изменение DEC/RULE, затем реализация/испытания.
 TEST-001–TEST-003 и TEST-048 дополняются этими границами; новых TEST ID нет.
 Ни конкретные современные модели, ни разрешение device эксперимента не выбраны.
+
+## Принятие DEC-001 —2026-10-09
+
+Принят default255 и совместимость с нестандартной шкалой; G01 остаётся
+проверкой актуальности/выбором способа, не открытым вопросом о самом требовании.
+TEST-001–TEST-003 default fixtures не подтверждают любой OEM; проверять
+преобразования чтения/записи,5% floor, step/sync/boot и upgrade после выявления
+необходимости. Нестандартный обход согласовать отдельно до внедрения.
+Протоколы безопасных device испытаний и реальные результаты ещё не созданы.
