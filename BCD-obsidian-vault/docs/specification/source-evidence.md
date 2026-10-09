@@ -11,7 +11,7 @@
 | E01 | `J/utils/Const.java:48–90,101–148,170–216`, `DEFAULT_MIN_BRIGHTNESS`, `SAFETY_MIN_BRIGHTNESS`, `AUTO_BRIGHTNESS_MODE`, `DEFAULT_*`, `KEY_*` | Диапазон -75..100; Auto=`Integer.MIN_VALUE`; наборы main [-75,-50,-25,0,25,50,75,100,5], notification [-75,-25,25,75,5]; последние элементы — шаги |
 | E02 | `J/service/BrightnessState.java:35–57,78–105,153–199,226–235`, `getUpdatedBrightnessPercentByStep`, `fromPercentToSystemBrightness`, `validateBrightnessPercent`, `loadInitialBrightness` | Шаг ограничен диапазоном; p<=5 → M*5/100, иначе p*M/100, целочисленное деление; проверка `p >= min \|\| p <= 100` ошибочна |
 | E03 | `J/screen/brightness/BrightnessUtils.java:39–119,127–176`, `setManualBrightnessMode`, `convertToBrightnessPercent`, `setPositiveBrightness`, `negBrightnessToAlpha`, `loadSavedBrightness` | raw→проценты через Math.round; отдельный helper проценты→raw округляет, активный State делит; putInt не проверяет boolean результата |
-| E04 | `J/screen/brightness/MaxMinBrightness.java:13–80`, `initDeviceMaxBrightness`, `getMaxDeviceBrightness`, `getMinimumDevicesSafeBrightness`, `getMaxSystemBrightness` | M отражением из `PowerManager.BRIGHTNESS_ON`, fallback 255, минимум M*5/100; это не калибровка физической яркости |
+| E04 | `J/screen/brightness/MaxMinBrightness.java:13–80`, `initDeviceMaxBrightness`, `getMaxDeviceBrightness`, `getMinimumDevicesSafeBrightness`, `getMaxSystemBrightness` | M отражением из `PowerManager.BRIGHTNESS_ON`, fallback 255, минимум M*5/100; источник/история OEM workaround уточнены ниже, это не калибровка физической яркости |
 | E05 | `J/service/DimmerService.java:677–746,793–845`, `setBrightness`, `setNegativeBrightnessPercent`, `setDimmerDeactivationAlarm`, `cancelDimmerDeactivationAlarm` | Auto→remove overlay/OS Auto/cancel; positive→manual/raw/remove/cancel; negative→manual floor/alpha/add/rearm |
 | E06 | `J/screen/overlay/OverlayDrawer.java:38–83,94–169,185–225`, `addOverlay`, `removeOverlay`, `setupWindowsAndViews`, `updateBackgroundAlpha` | Чёрный non-touchable overlay; TYPE_APPLICATION_OVERLAY на 26+; Paint alpha<=191; на 31+ отдельно params.alpha=maximum obscuring opacity; ошибки только логируются |
 | E07 | `J/service/DimmerService.java:380–428`, `handleCommandSystemBrightnessModeChanged`, `handleCommandSystemBrightnessChanged`, `shouldSyncWithSystemBrightness`; `J/screen/brightness/SystemBrightnessObserver.java`, `SystemBrightnessModeObserver.java`, `onChange` | ContentObserver→ServiceHandler→service; default sync=true; изменение ОС снимает overlay; один callback подавляется boolean-флагом |
@@ -93,3 +93,44 @@ minimum к p<=5, иначе p*M/100. Это активная цепочка ус
 `screen/brightness/BrightnessUtils.java:89–92` — отдельный helper с Math.round,
 который дал бы13 при5%/M255; он не подменяет integer formula активной цепочки.
 Подтверждены единицы и округление исходного кода, не физическая яркость устройства.
+
+## Причина reflection в E04 —2026-10-09
+
+Проверены рабочий Legacy HEAD cd7696cd04705fa48a2c115addf98ae6191bfdd9 и
+история Git. MaxMinBrightness.java:40 содержит ссылку на исходный
+[ответ63673416](https://stackoverflow.com/questions/56203720/how-do-i-detect-the-screen-brightness-range-on-android/63673416#63673416).
+Это первичное историческое сообщение автора метода, не гарантия современных OEM:
+вопрос сообщает о Xiaomi Mi8 с максимумом примерно1024 вместо255;
+автор ответа сообщает тесты reflection на Android9/10, включая Xiaomi.
+Использование BRIGHTNESS_ON в Legacy почти дословно совпадает с этим методом.
+
+Первое найденное добавление — a43496787cf5dac5ceed8ae4f000652ee4ef18f5 от
+2022-02-01, refactor: add BrightnessUtils.getMaxBrightness(), со ссылкой source
+уже в исходном diff. 9ace4b2e подключает определение максимума при старте сервиса;
+682aa780 выделяет класс, последующие rename сохраняют происхождение. Коммит
+не содержит номера конкретной жалобы BCD. BCD-60/Xiaomi от2022-03-04 меняет
+callback Auto, а BCD-76/Galaxy M51 от2022-03-14 включает переименование класса:
+они не доказывают исходную причину reflection. Это вывод по статической истории,
+а не утверждение о проверенной работе на этих устройствах.
+
+В AOSP Android10 поле BRIGHTNESS_ON=255 помечено @hide/UnsupportedAppUsage:
+[исходник](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android10-release/core/java/android/os/PowerManager.java).
+[Публичная настройка](https://developer.android.com/reference/android/provider/Settings.System#SCREEN_BRIGHTNESS)
+документирует максимум255, но ссылка Legacy описывает историческое отклонение OEM.
+[Ограничения non-SDK](https://developer.android.com/guide/app-compatibility/restrictions-non-sdk-interfaces)
+не позволяют считать reflection надёжным универсальным API.
+
+E02/E03 показывают назначение M: p*M/100 для записи, raw*100/M для чтения,
+M*5/100 для защиты. При условном M1024 фиксированная запись255 соответствует
+примерно четверти числовой шкалы; raw12 — примерно1.17%, вместо legacy minimum51.
+Это арифметика условной шкалы, не процент физического света и не измерение BCD.
+Комментарии BrightnessUtils.java о [0,255] сами по себе не доказывают диапазон OEM;
+там же109–113 описан иной OEM отказ записи255 (Eweat/Android6.0.1), не причина M.
+
+Вывод: reflection был способом получить изменённую OEM-константу из установленной
+прошивки, а не измерить дисплей. Связь с мотивом совместимости хорошо поддержана
+ссылкой/кодом; конкретная жалоба BCD и актуальность workaround пока неизвестны.
+DEC-001 остаётся открытым. Нельзя объявлять255/ raw12 совместимыми с любым OEM
+или менять принятый5% floor по этому статическому анализу. До удаления workaround
+нужно проверить границу Settings/System на релевантных прошивках. Анализ не
+разрешает опыты ниже защиты или ввод универсальной калибровки.
