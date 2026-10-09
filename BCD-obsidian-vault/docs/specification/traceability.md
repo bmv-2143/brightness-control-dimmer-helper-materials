@@ -10,7 +10,7 @@
 |---|---|---|---|---|---|
 | LB-001 | DEC-001 | FEAT-001 | RULE-001 | SCN-001–SCN-002 | TEST-001–TEST-002 |
 | LB-002 | DEC-001 | FEAT-001 | RULE-002 | SCN-003 | TEST-003,TEST-045,TEST-048 |
-| LB-003 | DEC-002 CONFIRMED_BY_USER; migration отдельно | FEAT-002 | RULE-003 | SCN-004–SCN-005 | TEST-004–TEST-005,TEST-048 |
+| LB-003 | DEC-002 CONFIRMED_BY_USER; численный перенос принят2026-10-09 | FEAT-002 | RULE-003 | SCN-004–SCN-005 | TEST-004–TEST-005,TEST-048 |
 | LB-004 | DEC-003 CONFIRMED_BY_USER | FEAT-003 | RULE-004 | SCN-006 | TEST-006 |
 | LB-005 | DEC-004 | FEAT-004 | RULE-006 | SCN-009 | TEST-009 |
 | LB-006 | DEC-003 CONFIRMED_BY_USER | FEAT-003 | RULE-005 | SCN-007–SCN-008 | TEST-007–TEST-008 |
@@ -34,8 +34,8 @@
 | LB-024 | DEC-011 | FEAT-009 | RULE-020 | SCN-027 | TEST-027 |
 | LB-025 | DEC-011 | FEAT-009 | RULE-021 | SCN-029 | TEST-029 |
 | LB-026 | DEC-011 | FEAT-009 | RULE-022; DROP только keyguard17..20 mechanism | SCN-030 | TEST-030,TEST-044,TEST-046 |
-| LB-027 | DEC-012, RULE-024 ещё PROPOSAL | FEAT-010 | RULE-024 | SCN-032 | TEST-032,TEST-046 |
-| LB-028 | DEC-012 CONFIRMED_BY_USER только RULE-023 | FEAT-010 | RULE-023 | SCN-031 | TEST-031 |
+| LB-027 | DEC-012 CONFIRMED_BY_USER | FEAT-010 | RULE-024 | SCN-032 | TEST-032,TEST-046 |
+| LB-028 | DEC-012 CONFIRMED_BY_USER | FEAT-010 | RULE-023 | SCN-031 | TEST-031 |
 | LB-029 | DEC-013 CONFIRMED_BY_USER | FEAT-011/FEAT-012 | RULE-041–RULE-048; Q-001 CLOSED_BY_USER | SCN-051–SCN-062 | TEST-060–TEST-071 |
 | LB-030 | DEC-014 CONFIRMED_BY_USER | FEAT-011 | RULE-025 | SCN-033 | TEST-033,TEST-047 |
 | LB-031 | DEC-015 | FEAT-011 | DROP: forced crash restart, storage сохранено | — | TEST-044 |
@@ -104,3 +104,12 @@ RULE-005/SCN-007–SCN-008/TEST-007–TEST-008 и RULE-025/SCN-033/TEST-033.
 объявлять принятым целиком по этому ответу. Перенос negative presets и
 RULE-024/SCN-032/TEST-032/TEST-046 остаются на review, DEC-015 также открыт.
 Все SCN/TEST — спецификация будущей проверки, не выполненное испытание.
+
+## Подтверждение пунктов1–3 —2026-10-09
+
+RULE-024/SCN-032/TEST-032 и часть TEST-046 о prefs upgrade приняты.
+Принята также часть TEST-044 об отсутствии forced crash restart DEC-015;
+остальные части этих общих TEST не подтверждаются автоматически.
+Перенос negative presets из DEC-002 связан с RULE-024: сохранить числа,
+не применять автоматически при upgrade, однократное краткое сообщение.
+Все SCN/TEST запланированы, не выполнялись. DEC-001 ещё на review.

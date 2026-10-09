@@ -2,7 +2,7 @@
 
 [Глоссарий: термины и обозначения](glossary.md). Местные пояснения сохраняют тот же смысл.
 
-Версия документов: 2026-10-08, частично завершённое согласование. Основание требований — [behavior-decisions](behavior-decisions.md), а не Legacy как утверждённая спецификация. 19 решений ADOPTED_BY_AGENT;11 CONFIRMED_BY_USER в указанном объёме: DEC-002 единая opacity (без решения о миграции), DEC-003 шаг из Auto, DEC-014 повтордоставка, DEC-005 внешняя синхронизация, DEC-012 только обычное открытие RULE-023, DEC-013 reboot-контракт, DEC-021–DEC-023 коммерческая политика и ограниченные DEC-029/DEC-030. Q-001/Q-002 закрыты; остаётся review остальных19 решений агента, recreation/миграции RULE-024 из DEC-012 и переноса старых negative presets. Принятые правила готовы к review и последующей реализации; они не доказывают работающую реализацию.
+Версия документов: 2026-10-09, частично завершённое согласование. Основание требований — [behavior-decisions](behavior-decisions.md), а не Legacy как утверждённая спецификация. 18 решений ADOPTED_BY_AGENT;12 CONFIRMED_BY_USER в указанном объёме: DEC-002 единая opacity и численный перенос negative presets, DEC-003 шаг из Auto, DEC-014 повтордоставка, DEC-005 внешняя синхронизация, DEC-012 открытие/recreation/миграция RULE-023–RULE-024, DEC-015 удаление forced crash restart, DEC-013 reboot-контракт, DEC-021–DEC-023 коммерческая политика и ограниченные DEC-029/DEC-030. Q-001/Q-002 закрыты; остаётся review остальных18 решений агента, включая DEC-001 о шкале/reflection. Принятые правила готовы к review и последующей реализации; они не доказывают работающую реализацию.
 
 ## Назначение и границы
 
@@ -45,7 +45,7 @@ Min API26, compile/target37, Kotlin/Compose/Material3 и toolchain уже зад
 
 ## Незавершённые зависимости
 
-Q-001/Q-002 CLOSED_BY_USER. Reboot-контракт и упрощённый резерв после отказа Auto задаются RULE-041–RULE-048. 19 ADOPTED_BY_AGENT решений остальных функций, RULE-024 из DEC-012 и перенос старых negative presets требуют review. Технический алгоритм часов, Direct Boot/FGS/OEM, G01–G08/store sandbox/signed upgrade/реальный restore ещё не проверены; принятие поведения не доказывает эти механизмы. Доступность продаж/рекламы личным аккаунтам — проверка перед интеграционными испытаниями/выпуском, не условие архитектуры. [Обзор отличий](../workflows/legacy-differences-review.md), [подготовка](../workflows/full-rewrite-preparation.md) и [монетизация](../workflows/monetization-provider-research.md).
+Q-001/Q-002 CLOSED_BY_USER. Reboot-контракт и упрощённый резерв после отказа Auto задаются RULE-041–RULE-048. 18 ADOPTED_BY_AGENT решений остальных функций требуют review; DEC-001 о шкале/reflection ещё не принят. Технический алгоритм часов, Direct Boot/FGS/OEM, G01–G08/store sandbox/signed upgrade/реальный restore ещё не проверены; принятие поведения не доказывает эти механизмы. Доступность продаж/рекламы личным аккаунтам — проверка перед интеграционными испытаниями/выпуском, не условие архитектуры. [Обзор отличий](../workflows/legacy-differences-review.md), [подготовка](../workflows/full-rewrite-preparation.md) и [монетизация](../workflows/monetization-provider-research.md).
 
 ## Уточнение защиты и кандидат будущей работы
 

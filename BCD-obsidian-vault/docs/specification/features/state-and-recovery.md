@@ -7,7 +7,7 @@ CAP-004. Reboot-контракт Q-001 закрыт пользователем 2
 | RULE / Feature / DEC | Формулировка, применимость и результат | Необходимые примеры |
 |---|---|---|
 | RULE-023 / FEAT-010 / DEC-012 | Первый запуск читает режим/raw ОС, не меняет их и не добавляет overlay; предлагает help once. Последующие открытия не навязывают Auto и не повторяют сохранённую light command | Initialmanualraw128→отображение50/OSunchanged/help;initialAuto→Auto/unchanged; reopen→no forcedhelp |
-| RULE-024 / FEAT-010 / DEC-012 | Сохранять presets/steps/visibility/options и requested numeric/Auto раздельно. Пересоздание в той же загрузке сохраняет active context с учётом sync/exclusions/grants, не продлевает timer. Совместимое обновление сохраняет распознаваемые валидные old prefs; ambiguous old mode не включает overlay без новой команды, invalid prefs→documenteddefault соответствующей настройки | Recreate-25/timerdeadline→тажецель/deadline;manualOS externallychanged/synctrue→OSwins; oldpresets75/step2 сохранены;rawsentinel ambiguous→no spontaneousdim |
+| RULE-024 / FEAT-010 / DEC-012 | Сохранять presets/steps/visibility/options и requested numeric/Auto раздельно. Пересоздание в той же загрузке сохраняет active context с учётом sync/exclusions/grants, не продлевает timer. Совместимое обновление сохраняет распознаваемые валидные old prefs; negative presets сохраняются численно, upgrade сам не применяет старое затемнение, однократное краткое сообщение отмечает возможное изменение его силы; ambiguous old mode не включает overlay без новой команды, invalid prefs→documenteddefault соответствующей настройки | Recreate-25/timerdeadline→тажецель/deadline;manualOS externallychanged/synctrue→OSwins; oldpresets75/step2 сохранены;rawsentinel ambiguous→no spontaneousdim |
 | RULE-025 / FEAT-011 / DEC-014 | Re-delivery одной принятой операции/recreation не умножает окна/эффекты и не меняет deadline. User newnegative command отличается от повтордоставки. Явная остановка ОС/force-stop прекращает active runtime, UI при запуске не утверждает, что окно всё время работало | Same operation twice→1overlay/samedeadline;force-stop→no promise background; reopened UI показывает inactive observed overlay |
 | RULE-026 / FEAT-012 / DEC-016 | Timeout defaultdisabled, duration3h; выбор30min..24h шаг30min. Save меняет duration; Cancel/закрытие безизменений сохраняет прежнее и не падает. Enable при уже negative запускает срок от принятия enable; безnegative не создаёт alarm | Fresh off3h;30min/24h accepted;45mininvalid;unchangedDismiss→3h;enableatnegative→deadline now+3h |
 | RULE-027 / FEAT-012 / DEC-016 | Enabled timer запускается/rearm от каждой новой принятой usernegative команды; active durationchange также rearm. Positive/Auto/disable/external sync change cancels. Exclusion suspension само не rearm/cancel | -25at0+3h→deadline3h;-50at1h→4h;change30minat1h→1h30;Auto→cancel;re-delivery→unchanged |
@@ -47,3 +47,14 @@ SCN-031/TEST-031 относятся к принятому открытию; SCN-
 контракта, не обещание перезапуска при любом завершении процесса.
 Принудительный alarm+kill после crash (DEC-015) отдельно не подтверждён.
 Recreation/миграция RULE-024 остаются отдельным предложением.
+
+## Подтверждение оставшихся пунктов —2026-10-09
+
+Приняты recovery/миграция RULE-024 и удаление forced crash restart DEC-015.
+При recreation действующей сессии сохраняются актуальная цель/исходный deadline,
+проверяются sync/grants/exclusions; просроченный overlay не показывать даже кратко.
+Это не обход force-stop и не повтор сохранённого preset при обычном открытии.
+При upgrade валидные настройки и числа negative presets сохраняются;
+нераспознаваемое поле получает свой default, неоднозначность не включает overlay.
+Численный перенос может усилить затемнение на API31+; однократное краткое
+сообщение принято. Premium/restore остаются подтверждёнными отдельно.

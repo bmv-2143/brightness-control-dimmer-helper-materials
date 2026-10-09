@@ -1,6 +1,6 @@
 # language: en
 # Общий глоссарий: ../docs/specification/glossary.md
-# 2026-10-08: RULE-003/005/007 приняты; DEC-001 и negative migration ещё на review.
+# 2026-10-09: RULE-003/005/007 и численный перенос negative presets приняты; DEC-001 ещё на review.
 Feature: Согласованное управление системной яркостью и затемнением
 
   Rule: RULE-001 Допустимая числовая шкала
