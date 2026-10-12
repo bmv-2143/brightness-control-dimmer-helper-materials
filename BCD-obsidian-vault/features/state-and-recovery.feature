@@ -49,6 +49,7 @@ Feature: Сохранение настроек и безопасное заве�
       Then timer остаётся выключен и duration равна "<duration>"
       And режим и яркость не изменены, active deadline отсутствует
       And действие не вызывает ошибки от закрытия окна
+      And начальное значение доступно без callback изменения slider
 
       Examples:
         | action                                | duration |
@@ -57,6 +58,9 @@ Feature: Сохранение настроек и безопасное заве�
         | сохранить 24 часа                     | 24 часа  |
         | попытаться сохранить 45 минут         | 3 часа   |
         | закрыть диалог без изменения значения | 3 часа   |
+        | Save без движения и без callback      | 3 часа   |
+        | Cancel без движения и без callback    | 3 часа   |
+        | Back без движения и без callback      | 3 часа   |
         | Cancel после выбора 30 минут          | 3 часа   |
         | Back после выбора 30 минут            | 3 часа   |
 
@@ -69,6 +73,7 @@ Feature: Сохранение настроек и безопасное заве�
       Then состояние яркости BCD "<brightness>"
       And сохранённая duration равна "<duration>"
       And настройка timer "<enabled>", active deadline "<deadline>"
+      And отсутствие callback slider само не вызывает ошибку закрытия или новый срок
 
       Examples:
         | screen            | initial                             | time  | action                                             | brightness           | duration | enabled   | deadline |
@@ -83,6 +88,9 @@ Feature: Сохранение настроек и безопасное заве�
         | окно duration     | -50, timer on, end16:00             | 14:00 | выбрать 30 минут и Cancel                          | -50, overlay         | 3 часа   | включена  | 16:00    |
         | окно duration     | -50, timer on, end16:00             | 14:00 | выбрать 30 минут и Back                            | -50, overlay         | 3 часа   | включена  | 16:00    |
         | окно duration     | -50, timer on, end16:00             | 14:00 | открыть и закрыть без изменений                    | -50, overlay         | 3 часа   | включена  | 16:00    |
+        | окно duration     | -50, timer on, end16:00             | 14:00 | Save без движения и без callback                   | -50, overlay         | 3 часа   | включена  | 16:00    |
+        | окно duration     | -50, timer on, end16:00             | 14:00 | Cancel без движения и без callback                 | -50, overlay         | 3 часа   | включена  | 16:00    |
+        | окно duration     | -50, timer on, end16:00             | 14:00 | Back без движения и без callback                   | -50, overlay         | 3 часа   | включена  | 16:00    |
         | Настройки         | -50, timer off, нет deadline        | 14:00 | включить timer                                     | -50, overlay         | 3 часа   | включена  | 17:00    |
         | Настройки         | manual25, timer off, нет dim        | 14:00 | включить timer                                     | manual25, нет dim    | 3 часа   | включена  | нет      |
         | Настройки         | -50, timer on, end16:00             | 14:00 | выключить timer                                    | -50, overlay         | 3 часа   | выключена | нет      |

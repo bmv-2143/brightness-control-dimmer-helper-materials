@@ -163,3 +163,8 @@ RULE-015/SCN-021/TEST-021 (стабильный ID/отсутствие рост
 Unknown/revoke/явное off покрыты SCN-039/TEST-039; sleep/prefs BUG-001 —
 SCN-026/TEST-026/028, без вывода о причине. Реальные detector/host/upgrade нужны отдельно.
 22 CONFIRMED_BY_USER/8 ADOPTED_BY_AGENT;48 RULE/62 SCN/71 TEST, ID сохранены.
+
+Уточнение пользователя2026-10-12 по потенциальному null LB-035/E23 связано с
+DEC-016/RULE-026/SCN-034–035/TEST-034–035: безопасны открытие и Save/Cancel/Back/
+закрытие без движения slider и без callback изменения. Число и ID артефактов
+не меняются; runtime воспроизведение Legacy и проверка новой версии не выполнены.
