@@ -254,3 +254,98 @@ positive manual яркости всё ещё открыта. [Принятые17
 сессией; positive manual не переключается в Auto от screen gesture. DEC-017
 CHANGE/CONFIRMED_BY_USER. Это продуктовый выбор, не исправление фактов E24:
 Legacy guard не имеет. [Принятый случай18](timer-and-safety-cases.md#18-защитная-последовательность-при-положительной-яркости).
+
+## Причины уведомлений и разрешений группы4 —2026-10-12
+
+E13–E16/E25 повторно проверены на Legacy HEAD
+`cd7696cd04705fa48a2c115addf98ae6191bfdd9`: код, call sites, Git, исходные ссылки.
+Это исследование перед review DEC-008/DEC-009/DEC-010, не их принятие и не испытания.
+
+**Foreground и controls.** Коммит `9127c6fa85d74bedb5aaf7c5a75558938e81b002`
+от2019-01-24 прямо сообщает о частых остановках сервиса Android O и исчезновении
+overlay; foreground использован против background execution limits.
+Комментарий `J/ui/MainActivity.java:204–213` ссылается на
+[исходный ответ](https://stackoverflow.com/a/50639788) и
+[Android8 background limits](https://developer.android.com/about/versions/oreo/background).
+Короткий SO permalink не получил читаемого содержимого, связанная поисковая
+выдача не устанавливает весь исходный ответ. История самого BCD и официальная
+документация доступны. Текущий `DimmerService.onCreate` начинает foreground на26+,
+но `updateForegroundService` при showIcon=false вызывает stopForeground(true)
+и очищает builder (`:321–333`). Это просьба снять foreground/notification,
+не доказательство гарантированного continued dimming или немедленной остановки.
+Текст `pref_show_icon_summary`/`help_page4_content1` обещает отсутствие kill;
+намерение повысить устойчивость доказано, такое абсолютное обещание нет.
+
+Toggle controls также вызывает повторное применение current/saved p через
+service (`MainActivity.java:220–258`, `SharedPreferencesChangeListener.java:33–46`).
+Для negative это может переустановить timer через E05. В новой группе4 предлагается
+менять только представление controls/required notice, без новой световой команды
+и изменения уже принятого deadline. Это предложение, не новое подтверждение DEC-008.
+Коммит `fe998f097a404cb0eb62519bc8f2e4cd651e86b0` от2023-10-22 исправляет
+невидимые controls через DecoratedCustomViewStyle; новый макет этим не предписан.
+
+**Channels.** Коммит `91e4fbf72f38b483ee5a1efc35458bbfb32426ef` от2019-02-02
+вводит timestamp ID и delete/create для изменения importance из BCD settings.
+Авторский мотив — настройка приоритета, не доказанное намерение обходить user choice.
+`60d5d71b507a612d14112755363584e230128020` того же дня связывает ShowIcon с HIGH/MIN.
+В текущем `NotificationControls.java:22–50` ветка on форсирует HIGH, off ветка
+закомментирована; комментарий предупреждает о MIN для foreground со ссылкой на
+NotificationManager. Не объявлять весь historical HIGH/MIN flow текущим.
+Текущий builder.setSilent(true), lights/vibration false; sound канала отдельно
+в makeAndSetupNotificationChannel не обнуляется. Новая silent initial конфигурация
+и стабильный канал требуют проверки; user настройки не переписывать.
+По [официальным channels](https://developer.android.com/develop/ui/compose/notifications/channels)
+после создания importance/поведение контролирует пользователь; BCD может открывать
+системные настройки канала. Это основание сохранять user выбор вместо новых ID.
+
+**Раздельные grants.** `Utils.areRequiredPermissionsGranted` требует canWrite И
+canDrawOverlays; MainActivity gate может закрыть текущую Activity, service gate
+пытается открыть PermissionConfigurationActivity. Причина специальных доступов
+соответствует system write/overlay, но отдельный мотив требовать оба для просмотра
+help/manual в истории не установлен. Коммит `9c632d96cce434843b8a9dd910e9a2067120e63e`
+от2019-01-26 добавляет NEW_TASK против crash Android6 при запросе из boot service;
+это не современное разрешение произвольно открывать Activity из background.
+`e3ce2e3eb270302d30a99c54af72c5405b063370` от2019-01-14 исправляет crash при отзыве
+разрешений и возврате в приложение. Перепроверка grants сохраняет назначение.
+
+`PermissionConfigurationActivity.openWriteSettingsScreen` ловит отсутствующий
+handler и предлагает общие настройки. Комментарий сообщает crash на некоторых
+устройствах, модели не указаны. [Settings API](https://developer.android.com/reference/android/provider/Settings#ACTION_MANAGE_WRITE_SETTINGS)
+подтверждает возможность отсутствия matching Activity. Сохранять безопасный
+доступный путь/объяснение, не обещать наличие всех системных экранов на всех OEM.
+
+**Ожидание overlay grant.** `e2f7d5785b04623eb77d6ce0d8fa601fa931ef5e`
+от2019-01-14 вводит workaround Android O: canDrawOverlays временно false после
+выдачи разрешения. Текущий `PermissionConfigurationActivity.java:49–50,108–153`
+использует CountDownTimer до10s с проверками раз в1s и завершением при true.
+Комментарий автора спрашивает, не слишком ли велики10s. Это верхняя граница
+ожидания по конкретному пути, не безусловная10s задержка каждого запроса.
+[Исходное обсуждение/ответ48127195](https://stackoverflow.com/questions/46173460/why-does-settings-candrawoverlays-method-in-android-8-returns-false-when-use/48127195)
+содержит report на эмуляторе API26 и решение наблюдать AppOps с cleanup listener;
+оно также предупреждает, что фиксированная задержка зависит от устройства.
+Другие ответы описывают пробное невидимое окно; такое решение не утверждено.
+Исторический BCD diff содержит эти кандидаты, но в текущем классе остались поле
+listener и stopWatchingMode без активного startWatchingMode вызова.
+Исторический report не воспроизведён здесь и не доказывает актуальность на новых
+прошивках. В proposal не фиксировать10s как продуктовую норму, но перед выбором
+реализации проверить API26/современные grants, не терять мотив обхода и не считать
+false/resultCode доказательством успешного доступа. Нестандартный путь не копировать
+без согласования; поздний grant не применяет отклонённую light command сам.
+
+**Shade.** `89c297a4e99264eae47e763d2a9c482787b21f02` от2023-11-04 отключает
+принудительное закрытие на31+ и скрывает настройку. На26–30 current code по enabled
+опции посылает ACTION_CLOSE_SYSTEM_DIALOGS после preset/Auto, но не +/-.
+Назначение `pref_show_close_notification_shade_on_click_summary` — быстрее вернуться
+к приложению после выбора яркости. [Android12](https://developer.android.com/about/versions/12/behavior-changes-all#close-system-dialogs)
+ограничивает этот broadcast; это не доказательство невозможности на26–30.
+Удаление опции на всех поддерживаемых API — отдельный продуктовый выбор DEC-009.
+
+**Граница target37.** [POST_NOTIFICATIONS](https://developer.android.com/develop/ui/compose/notifications/notification-permission)
+runtime с33; отказ сам не запрещает FGS, но notification обязателен и notice может
+остаться в Task Manager без shade. Legacy guard >=31 ошибочен, а запрос есть
+как в permission flow, так и при включении icon. Требование notification отделено
+от возможности долгой работы: [FGS types](https://developer.android.com/develop/background-work/services/fgs/service-types)
+и [background starts](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start)
+требуют отдельной проверки типа/manifest/сценариев запуска/политики Google Play.
+specialUse только кандидат оценки, не уже выбранная или одобренная архитектура.
+До оценки не обещать вечную работу; proposal предполагает допуск ОС и grants.
