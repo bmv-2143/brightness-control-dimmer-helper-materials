@@ -27,7 +27,7 @@
 | E17 | `J/widget/WidgetBrightnessVal.java:25–74`, `onUpdate`, `updateAppWidget`; `WidgetBrightnessValConfigureActivity.java:39–77`; `J/utils/Utils.java:88–149` | Текст Auto из режима ОС, иначе saved (fallback OS); tap открывает Main; notification widget общий control набор |
 | E18 | `J/widget/WidgetNotification.java:28–99`, `onReceive`, `updateAppWidget`; `J/widget/WidgetPlusMinusHorizontal.java:20–55`, `WidgetPlusMinusVertical.java:21–55`; `R/xml/widget_*_info.xml` | Value, notification, horizontal, vertical providers; update intents, resize, home/keyguard categories, настройка двух +/- видов |
 | E19 | `J/widget/WidgetPlusMinusConfigureActivity.java:63–230,259–316`, configure listeners, `save*`, `delete*`; `WidgetPlusMinusHorizConfigureActivity.java:19–43`, `WidgetPlusMinusVertConfigureActivity.java:19–43` | Named prefs `net.humblegames.brightnesscontroldimmer.Widget`; appwidget_<id> step default10 (1..50), appwidget_transparency_<id> default100 (15..100/5); Auto bool пишется до подтверждения; delete только step |
-| E20 | `J/utils/Utils.java:217–286,316–465,693–714`, `KEY_WIDGET_BTN_SHOW_AUTO_BRIGHTNESS_BTN*`, `isKeyguardMode` | PendingIntent requestCode0+одинаковый action +/- с UPDATE_CURRENT, widget ID не в identity; extras step могут заменяться; старый global Auto key fallback; keyguard branch только API17..20 |
+| E20 | `J/utils/Utils.java:217–286,316–465,693–714,805–812`, `updatePlusMinusWidget`, `KEY_WIDGET_PLUS_MINUS_SHOW_AUTO`, `KEY_WIDGET_PLUS_MINUS_SHOW_AUTO_PREFIX`, `isKeyguardMode`, `getPendingIntentService` | PendingIntent requestCode0+одинаковый action +/- с UPDATE_CURRENT, widget ID не в identity; extras step могут заменяться даже при IMMUTABLE; global Auto key для старого view ID отдельно от per-ID/defaultfalse для новых IDs; keyguard branch только API17..20 |
 | E21 | `J/broadcasts/StartOnBootServiceReceiver.java:20–47`, `onReceive`; manifest:165–171 | BOOT_COMPLETED→startForegroundService на26+→TYPE_START_ON_BOOT→Auto; нет пользовательского boot-флага |
 | E22 | `J/exceptions/CrashHandler.java:23–26`, `uncaughtException`; `AppRestarter.java:41–63`, restart; `J/app/App.java:34–49`, `onCreate` | CrashHandler→RTC alarm +100ms→kill/exit; flags PendingIntent без IMMUTABLE, debug BuildConfig из androidx.multidex |
 | E23 | `J/ui/DimmerOffTimeoutSelectorDialog.java:25–91`, dialog `progress`, dismiss; `J/ui/settings/FragmentSettings.java:263–276`; `J/utils/Utils.java:716–762,815–829`; E05 | index0..47→30..1440min release; index5=3h; debug index+1 секунд; ELAPSED_REALTIME/set non-wakeup; dismiss progress nullable |
@@ -365,3 +365,194 @@ RULE-014/TEST-020 уточнены по читаемости, точный ма�
 и масштаб не сообщены; агентом device tests не выполнялись. Исходный мотив
 смены importance и история2019/2023 сохранены; варианты миграции старых каналов
 нуждаются в отдельной технической проверке без потери пользовательских настроек.
+
+## Исследование группы5: виджеты и исключения —2026-10-12
+
+[Случаи для согласования](../workflows/group5-widgets-and-exclusions-review.md).
+DEC-011/018/019/020 остаются ADOPTED_BY_AGENT; эта запись не принимает поведение.
+Legacy HEAD cd7696cd04705fa48a2c115addf98ae6191bfdd9. Просмотрены production
+providers/configure, Utils, service/state/overlay, watcher/settings, manifest,
+XML/layouts/strings, соответствующие тестовые входы, Git diffs и исходные ссылки.
+Приложения и Android-тесты не запускались. G04/G05 остаются открытыми.
+
+### Виджеты: назначение, независимость и сохранение
+
+E17–E20 подтверждают четыре типа. WidgetBrightnessVal показывает Auto из ОС
+либо saved numeric/fallback OS и открывает MainActivity. Он не является кнопкой
+с индивидуальным фиксированным preset. WidgetNotification имеет четыре общих
+с уведомлением значения, Auto, +/- и открытие Main; индивидуальные presets
+каждому экземпляру здесь не назначены. Horizontal/vertical имеют свой шаг,
+оформление и видимость Auto, но не собственное текущее состояние яркости.
+В layout двух +/- типов нет numeric label: общий смысл состояния не требует
+изобретать такую подпись для каждого типа.
+
+Комментарий WidgetBrightnessValConfigureActivity:32–77 ссылается на старое
+Android appwidgets руководство: configuration должна сама обновить widget и
+вернуть исходный ID. Он сообщает о crash launcher на HTC Desire S/Android2.3.3
+и Fly IQ441/Android4.0 при отсутствии ID в result. Это исторический report автора,
+не запуск этих устройств здесь. Современная официальная
+[configuration documentation](https://developer.android.com/develop/ui/compose/glance/configuration)
+также требует ID/result и initial update; её пример отменяет placement при Back.
+Это обоснование lifecycle, не выбор Glance вместо RemoteViews. Текущая value
+configuration не валидирует INVALID_APPWIDGET_ID так же, как +/- configuration.
+
+Комментарий Utils:225–247 о разных actions защищает различие Plus и Minus.
+Diff 47f9b9432bddc5dfaadacd8121350a8c7c1cf0b6 от2015-02-15 уже содержит
+разные actions, requestCode0 и step extras. В текущем коде appWidgetId
+используется при чтении настроек/обновлении views, но не при идентификации
+PendingIntent кнопок разных экземпляров. По
+[официальному PendingIntent API](https://developer.android.com/reference/android/app/PendingIntent)
+extras не различают tokens; UPDATE_CURRENT заменяет extras, включая IMMUTABLE.
+Следовательно, обновление B может подменить step у действия A того же знака.
+Это статически установленный механизм возможной подмены, не воспроизведённый
+результат конкретного launcher и не установленная причина BUG-001.
+TODO WidgetPlusMinusConfigureActivity:33 о совпадении preference prefixes
+не доказывает ту же причину: ключи дополнительно содержат appWidgetId.
+
+История запуска: ac7a09b00a354bb0890e40e60b99d6ba8cb8342d от2019-01-23
+ввёл getForegroundService наAndroid8; dbd2dde104ce35ddc0a7d7b6dc110158453b0469
+от2019-02-05 вернул getService и явно запретил foreground в helper, но
+не пояснил конкретный отказ/устройство. c6015a9f45f6922b25d6ec77b8f44ca1ad28561c
+от2023-10-21 добавил IMMUTABLE против crash приSDK31+.
+Текущий Utils:805–812 использует getService; foreground ветвь закомментирована.
+Не объявлять старое решение бессмысленным или доказанно подходящим target37.
+[FGS background restrictions](https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start)
+учитывают явное действие на widget как исключение, но это не гарантия любого
+запуска/долгой работы и не выбранный FGS type.
+
+Configure +/-:69–230 начинает RESULT_CANCELED и отвергает invalid ID.
+Шаг начинается с10 (диапазон1..50), оформление со100 (15..100 через5).
+При повторном открытии existing step/opacity не загружаются в sliders;
+Auto читается per-ID и записывается listener сразу, до Add/Save.
+Horiz/VertConfigure:27–43 подтверждают step/opacity отдельными commits и
+возвращают ID; Delete удаляет лишь step (base:300–304), не opacity/Auto.
+Это обоснования атомарного Save/Cancel и полного cleanup в предложении,
+не новые требования уже принятых групп.
+
+Utils:289–398 выбирает background/pressed-state resources по opacity.
+Комментарий говорит, что прямое изменение background делало подсветку
+нажатия невидимой. Коммиты983ad4ea/45773536 от2019-02-22/23 реализуют шаг5
+и vertical оформление; eee33d96 задаёт default100. Preview меняет alpha
+контейнера, runtime меняет ресурсы фона/кнопок; точное визуальное совпадение
+не проверено. Это оформление widget, не сила затемнения экрана.
+
+74e94a3842b9dcb6ebd33d3b3ace4d343d8353ed от2019-02-23 вводит per-ID Auto
+и сохраняет global bool для старого btn_widget_auto. Комментарий Utils:277–286
+объясняет совместимость1.5.5→1.5.6: старый виджет мог сохранить прежний view ID.
+Текущие IDs horizontal/vertical используют per-ID/defaultfalse, старый ID —
+global/defaultfalse. **Общий fallback global при отсутствии per-ID не является
+точным AS-IS алгоритмом.** E20/LB-026 уточнены; RULE-022/SCN-030 пока предлагают
+нормализацию миграции с приоритетом explicit per-ID, затем global, затемfalse.
+Старые layout/host fixtures нужны, прежде чем объявлять effective preference
+перенесённой без изменения. Само обновление не применяет свет.
+
+Исторические97c59fd9/4fcef69b от2015-03-09 добавляют keyguard layouts.
+Utils:693–714 ограничивает их API17..20; Legacy min21 уже делает ветвь
+недостижимой. Не переносить её в min26; это не вывод, что современные
+launcher/ОС никогда не поддерживают размещение виджетов на lockscreen.
+XML category сама не гарантирует доступного host.
+
+### BUG-001 и пределы старых тестов
+
+[Исходное письмо](../bugs/bug-register.md#bug-001-значения-яркости-виджета-после-включения-экрана)
+не уточняет тип/версию/launcher, явное нажатие после включения и конкретный
+результат. Не выводить reboot, force-stop или потерю preference из письма.
+37b2a331ecddcc889057d65f02e0c59a75e09680 от2022-02-25, BCD-46, добавляет
+own-write marker для shared controls path; current widget +/- path его
+не устанавливает (DimmerService:343–355,442–453). Это отдельный кандидат
+проверки observer, не диагноз BUG-001. Исторический7573269b от2015-03-08
+обновлял lockscreen widget на SCREEN_ON; он не обещает повторного применения
+яркости и не устанавливает причину сообщения2026.
+
+DimmerServiceTest:665–699 создаёт widget Intent и запускает service напрямую.
+Такой тест не проходит через настоящий host/PendingIntent и не проверяет
+коллизию двух экземпляров, Cancel/Delete или реакцию после сна. Старые тесты
+не запускались. Для BUG-001 нужен отдельный контроль: одинаковое явное
+нажатие до сна/после включения и unlock, сохранённые настройки, readback ОС,
+overlay/ошибка и сравнение с main при том же доступе. Добавить API36/Android16
+в будущую матрицу TEST-026/028 после согласования; сообщение не закрыто.
+
+### Исключения: причина, история и пределы распознавания
+
+Strings help_page6/pref_summary_auto_disable_dimmer_service объясняют назначение:
+overlay может блокировать защищённые Install/Pay. Это мотив снять окно,
+не автоматически увеличить brightness или считать покупку успешной.
+[Android tapjacking documentation](https://developer.android.com/privacy-and-security/risks/tapjacking)
+подтверждает возможность фильтрации касаний из-за overlay; не гарантирует
+поведение всех пяти приложений/версий. SpecialAppsPackages:11–18 сохраняет
+historical Android10/11 наблюдение о com.google.android.packageinstaller и
+Xiaomi com.miui.securitycenter/AdbInputApplyActivity: возможно ОС уже убирала
+окно/не блокировала их. Модели/точные версии и воспроизведение отсутствуют;
+эти два пакета не входят в active fixed5, не добавлять их по догадке.
+
+e3eb555a от2021-11-24 реализовал Accessibility open/closed Google Play;
+0bc5ba4b32840f2fb733232d375a9bba97d3641d от2021-12-11 добавил UsageStats draft;
+4b31cbcc42fc506ba2afb2a69d2cbca91559647b от2021-12-13 подключил polling.
+3f22ba075a8d6b187899ed9528522867650d8be1 от2021-12-16 отключил запрос
+Accessibility;63499b7e67925136826277b4ededdb0439698878 от2022-03-01 закомментировал
+service в manifest (BCD-28). Комментарий называет путь работающим и планируемым
+для будущего, но конкретная причина окончательного отключения не раскрыта.
+Не утверждать, что это вызвано Google Play rejection, OEM или доказанной
+бесполезностью Accessibility. a7de7ba4 от2022-01-29 добавил APK installer,
+25c20db1 от2022-03-03 — Gmail, b0f5dcba/372c862d от2022-04-08 — Pay/GMS.
+Назначение списка согласуется с protected flows; отдельные жалобы/устройства
+и подробный мотив каждого добавления в просмотренных diffs не найдены.
+
+ForegroundAppChecker:30–99 проверяет AppOps; выбирает largest lastTimeUsed
+из DAILY stats за диапазон now-1day..now+1day. При null использует первый
+running process; ошибки/пустой список дают empty string. Это не достоверный
+факт видимого foreground; несколько packages могут иметь одинаковый timestamp.
+Watcher:21,60,79–113 проверяет с периодом1500ms; до пяти вызовов checker в
+одном проходе читают разные снимки. Переход boolean false, включая unknown,
+может послать CLOSED; первый такой проход также может послать CLOSED.
+По [UsageStatsManager API](https://developer.android.com/reference/android/app/usage/UsageStatsManager)
+статистика требует special access, а сAPI30 может быть null при
+UserManager.isUserUnlocked=false. Это состояние user storage, не доказательство
+null после каждого обычного выключения/блокировки экрана.
+
+DimmerService:249–260,956–962 связывает OPENED→removeOverlay,
+CLOSED→addOverlay без проверки p/mode/timer/grant. Поэтому callbacks сами
+не отменяют timer/цель; но возврат окна после Auto/positive и stale events
+возможен по коду. При новой negative command setNegative:708–711 добавляет
+окно независимо от recognised exclusion; watcher flags могут не послать
+повторный OPENED, пока boolean остаётсяtrue. Возобновление должно проверять
+актуальную цель; новая negative команда при исключении должна оставаться
+приостановленной. Это предложения review, не подтверждённые изменения.
+Не обещать zero leakage или точные1500ms на устройстве.
+
+### Частичный selector и отключённый Accessibility
+
+6da1a4ba/0c403ae7 от2022-04-26 помечают selector WIP;
+5eaeb884 открывает его из TestTools. Activity показывает installed-app names,
+но не сохраняет selection и не подключает его к fixed watcher. TODO ссылается
+на [исходное обсуждение списка приложений](https://stackoverflow.com/questions/2695746/how-to-get-a-list-of-installed-android-applications-and-pick-one-to-run):
+оно про получение/запуск списка, не готовое исключение. PremiumUpgrade:65–66
+комментирует будущую настройку; это не принятое дополнительное право/gate.
+Предложение DROP касается незавершённого selector, сохраняя fixed функцию.
+
+AccessibilityServiceStatusChecker ссылается на
+[лекцию автора Яндекса2018](https://habr.com/ru/company/yandex/blog/417865/):
+исторически пустой enabled-service list обходили чтением Settings.Secure;
+там также отдельно описаны MIUI autostart проблемы. Это первичный рассказ
+автора доклада, не результаты BCD и не правило современных Xiaomi.
+7f43c42f от2021-11-19 сохраняет источник динамической конфигурации
+[GeeksforGeeks](https://www.geeksforgeeks.org/how-to-create-an-accessibility-service-in-android-with-example/);
+пример поясняет происхождение setServiceInfo/package filter, не надёжность BCD.
+TestTools:308–315 сам предупреждает, что startService не заменяет включение
+пользователем; SO10727837 не дал читаемого ответа, SO64445251 доступен.
+Официальный [AccessibilityService lifecycle](https://developer.android.com/reference/android/accessibilityservice/AccessibilityService)
+подтверждает включение пользователем, binding ОС и необходимость declaration.
+Это основание не считать debug startService активным production detector,
+но не основание приписать конкретную причину отказа от альтернативы.
+Ссылка DimmerService:763 на SO3455123 (widget update) также не дала содержимого;
+официальное правило initial configuration update доступно и проверено отдельно.
+
+### Неопределённость, которую review не устраняет
+
+Не выбраны detector, FGS/start path, допустимая задержка/оценка полезности,
+подписанные widget upgrade fixtures и сохранение host IDs. Пока предлагается
+unknown не считать выходом из исключения и не возвращать приостановленный
+overlay по empty result; отзыв Usage access отдельно отключает функцию,
+без автоматического возврата снятого окна. При явно выбранном отключении
+исключений возврат актуальной отрицательной сессии — отдельный случай review.
+Эти новые уточнения не записаны как принятые RULE/SCN/TEST до ответа пользователя.
