@@ -38,11 +38,11 @@ P0 — core/safety/blocking release; P1 — основная функциона�
 | TEST-017 / SCN-017 | Close option on/off; fixed/Auto/step/slider → ожидаемое состояние панели, свет сохранён; отказ оставляет panel открытой | U: настоящий Activity lifecycle; A: raw/overlay; проверить defaultoff | P1; отказ дополнительно TEST-023 |
 | TEST-018 / SCN-018 | Visibility доступна; hideall/row3 → hint/Settings доступны, нет вложенных+/-; restore сохраняется | U: реальные settings/reopen/hierarchy; L: зависимость групп | P1; Q-002 |
 | TEST-019 / SCN-019 | Main открыт, dim активен; value widget → одна panel без новой команды; Back → panel закрыта, dim действует | U/A: настоящие launcher intents/task/overlay26/37 | P1; G03/G05 |
-| TEST-020 / SCN-020 | Notification grant есть, dim разрешён; выключить controls → dim сохранён, обязательный notice передан ОС | A/U: настоящий FGS notice/shade/TaskManager26/33/37, без fake NotificationManager | P0; оценка законного FGS type/manifest, G03 |
-| TEST-021 / SCN-021 | Channel существует, userLOW; toggle/reopen → тот же channel/LOW, без sound, blocked state учтён | A/U: реальные channel settings26/37 | P0; G03, наблюдать identity, не фиксировать внутренний класс |
-| TEST-022 / SCN-022 | Матрица grants; manual/negative/Auto/help → соответствующий результат или объяснение доступа, grant перепроверен | L: fake grant matrix; A/U: настоящий special access UI26/37 и denial | P0; G03, OEM settings handlers |
+| TEST-020 / SCN-020 | Notification grant есть, dim разрешён, -50/end16:00; toggle off → кнопок нет, те же dim/deadline, обязательный notice передан ОС; on без новой команды. Проверить текстовое состояние -75/-25/25/100/Auto отдельно от малой иконки, цельные подписи пресетов с минусом и %, различимость и области нажатия без обрезки/наложения | A/U: настоящий FGS notice/shade/TaskManager26/33/37, без fake NotificationManager; D/U: Honor Magic 7 Pro и доступные другие OEM, обе темы, увеличенный шрифт/масштаб, узкая область, свёрнутый/развёрнутый вид | P0; G03, законный FGS type/manifest; исходные дефекты в notification-device-evidence, макет не выбран |
+| TEST-021 / SCN-021 | Fresh initial HIGH без звука/вибрации; существующий userLOW/пользовательские параметры → toggle/reopen/допустимое пересоздание сервиса сохраняют ID/параметры, число действующих каналов управления яркостью не растёт; blocked state учтён | A/U: реальные channel settings26/37; D: Honor Magic 7 Pro при доступности; отдельно подписанный upgrade fixture с несколькими Legacy каналами и проверкой выбранного в будущем безопасного пути миграции | P0; G03, наблюдать identity/count/settings; не считать строки OEM UI dump каналов, миграция ещё не выбрана |
+| TEST-022 / SCN-022 | Матрица grants; manual/negative/Auto/help/settings → соответствующий результат или объяснение доступа, grant перепроверен; manual/Auto без overlay доступны, просмотр без обоих grants доступен | L: fake grant matrix; A/U: настоящий special access UI26/37 и denial | P0; G03, OEM settings handlers |
 | TEST-023 / SCN-023 | Overlay grant отсутствует; negative/deny → ошибка, nooverlay, panel доступна; поздний grant без новой команды → noapply | L: отсутствие deferred action; A/U: настоящие settings/re-entry26/37 | P0; G03 |
-| TEST-024 / SCN-024 | Grants есть; writefalse/windowfail/revoke/missinghandler → точная ошибка/partial state | L: deterministic fake faults; A: реальный revoke/readback; U: error; отсутствие handler можно моделировать | P0; G01/G02; не обещать rollback настройки ОС |
+| TEST-024 / SCN-024 | Для writefalse/windowfail/revoke исходные grants есть; для missinghandler WRITE_SETTINGS отсутствует. Результат → точная ошибка/partial state; отсутствие системного экрана оставляет просмотр и доступную альтернативу, без ложного success/фонового открытия/отложенной команды | L: deterministic fake faults; A: реальный revoke/readback; U: error; отсутствие handler можно моделировать | P0; G01/G02; не обещать rollback настройки ОС |
 | TEST-025 / SCN-025 | API31/32/33/37, grant matrix; enable controls → запрос только33+, честная shade availability, manual доступен | A/U: реальные POST dialog/channel; L: граница API32/33 | P0; P04/G03 |
 | TEST-026 / SCN-026 | Четыре widgets, Auto128; open/preset25/+10/-10 → panelAuto/цели25/60/40 | A/U: настоящий host/PendingIntent/ОС26/37; L не доказывает host | P1; G05, фиксировать возможную race Auto |
 | TEST-027 / SCN-027 | A:2/15/hidden, B:10/100/visible, цель25; updateB/tapA/tapB →27/37, styles сохранены | A/U: два настоящих instances и launcher update; L: независимость per-ID map | P0; G05, регрессия collision |
@@ -117,7 +117,7 @@ RULE-041–RULE-048 приняты пользователем; Q-001 закры�
 
 Сверено с `BrightnessControlDimmer/TESTING.md`, `app/build.gradle.kts`, `gradle/libs.versions.toml`, AGENTS/QUALITY/MODERNIZATION на HEAD `87ef042e62c7a671fa4babfc932d27b55086efb1`: JVM Jupiter безVintage; AndroidJUnit4/AndroidJUnitRunner/ActivityScenario, UIAutomator2.4.0; accessibility34+; min26/target37/JDK21; Kover только JVM, без coverage gate. Template tests не проверяют свет. CLI/CI команды здесь не выполнялись.
 
-Порядок: после закрытия Q-001/Q-002 провести review остальных15 решений в группах4–7 (группы1–3 закрыты), сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
+Порядок: после закрытия Q-001/Q-002 провести review остальных12 решений в группах5–7 (группы1–4 закрыты), сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
 
 Использовать dedicated devices без существующей Legacy установки, одинаковый applicationId может уничтожить чужие данные; migration только на отдельной копии. Выбирать `ANDROID_SERIAL`, не AGP `--serial`; не запускать конкурирующие Gradle builds. После будущих запусков проверять непустые XML results/failed/skipped, не только exitcode; reports оставить по TESTING.md. Подписи/productionversion/магазин/billinginfra решить в дальнейшей работе. Настоящий test implementation и все результаты ещё отсутствуют.
 
@@ -215,3 +215,13 @@ TEST-034–TEST-036 и negative сценарии TEST-037 описывают п�
 сохраняется после четырёх подходящих событий. TEST-037 проверяет этот guard,
 а также nonnegative0 и Auto; TEST-045 сохраняет широкое фактическое AS-IS
 поведение Legacy отдельно от новой приёмки. Старый открытый статус выше исторический.
+
+## Принят объём группы4 —2026-10-12
+
+Пользователь подтвердил случаи1–8: TEST-020–TEST-025 и часть TEST-044 об отсутствии
+принудительного закрытия системной панели соответствуют принятому контракту.
+Это не принятие всей TEST-044 или выполненные проверки. TEST-020/021 уточнены
+по [снимкам Honor Magic 7 Pro](notification-device-evidence.md); подписи и состояние
+проверять на настоящем системном уведомлении. Исследовать запаздывающий overlay
+grant API26 в TEST-023 без фиксированной10s нормы; safe alternative missing-handler
+и отсутствие фонового открытия/отложенной команды в TEST-024. ID не менялись.

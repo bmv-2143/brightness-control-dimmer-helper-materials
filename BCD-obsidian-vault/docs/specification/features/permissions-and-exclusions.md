@@ -13,3 +13,13 @@ CAP-005; RULE-018 относится также к CAP-003/FEAT-008. Прави�
 | RULE-031 / FEAT-015 / DEC-018 | При active exclusions и распознанном fixed excluded package приостановить только negative overlay, показывать suspension, не менять системный mode/raw/requestedp. При выходе восстановить overlay только если цель остаётсяnegative, grant есть и не отменён timer/Auto/externalsync. Auto/positive никогда не создают overlay. Timer продолжает идти во время suspension | -25→GooglePlay→nooverlay/p=-25/raw12→other→overlay; whileexcludedAuto→other nooverlay; expiry→other nooverlay; changednegative-50 остаётсяsuspendedдоexit |
 
 Fixed list: `com.android.vending`, `com.google.android.gm`, `com.android.packageinstaller`, `com.google.android.apps.walletnfcrel`, `com.google.android.gms`. Гарантия RULE-031 условна фактом распознавания, не обещает zero leakage при polling/unknown stats; unknown не следует выдавать как доказанно safe/excluded. Способ detection и приемлемость на устройствах остаются G04. Пересмотреть DEC-018, если будущая platform validation не подтвердит полезность. Не превращать fake detector test в доказательство реального UsageStats.
+
+## Принята группа4 —2026-10-12
+
+DEC-010/RULE-016–RULE-018 подтверждены по [случаям1–4 и6](../../workflows/group4-notifications-and-permissions-review.md).
+При отсутствии системного экрана сохранить просмотр и предложить доступную
+альтернативу/объяснение; фоновое событие не открывает permission Activity само.
+Поздний grant не выполняет прежнюю отклонённую команду без нового действия.
+Не навязывать фиксированное ожидание10s: проверить актуальность исторического
+Android8 обхода до выбора реализации, не объявлять непроверенный grant успешным.
+Принятие не подтверждает группу5, механизм FGS и результаты device tests.

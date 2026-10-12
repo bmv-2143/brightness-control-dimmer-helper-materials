@@ -13,9 +13,11 @@ Feature: Доступы Android и временное исключение за�
       Examples:
         | write      | overlay    | action          | result                                |
         | выдано     | не выдано  | manual 25       | ручной режим и raw 63                 |
+        | выдано     | не выдано  | Auto            | Auto без запроса overlay access       |
         | выдано     | не выдано  | negative -25    | объяснён недостающий overlay access    |
         | не выдано  | выдано     | Auto            | объяснён недостающий WRITE_SETTINGS    |
         | не выдано  | не выдано  | открыть help    | help открыта без запроса grants       |
+        | не выдано  | не выдано  | открыть settings| настройки открыты без запроса grants  |
 
   Rule: RULE-017 Отказ и частичный результат не являются успехом
     @FEAT-014 @SCN-023
@@ -28,17 +30,17 @@ Feature: Доступы Android и временное исключение за�
 
     @FEAT-014 @SCN-024
     Scenario Outline: Показать фактический исход неуспешной операции
-      Given BCD имеет необходимые разрешения до начала операции
+      Given главный экран BCD открыт с доступами "<access>"
       When при операции происходит "<failure>"
       Then пользователь видит "<result>"
       And BCD не сообщает о полностью применённой команде
 
       Examples:
-        | failure                                     | result                                      |
-        | ОС отклоняет запись ручной яркости           | ошибка записи и прочитанное состояние ОС     |
-        | raw 12 принят, но создание overlay отклонено | частичный результат без действующего overlay|
-        | grant overlay отозван при active dimming     | overlay снят и доступ требуется снова        |
-        | нет Activity для special access settings     | объяснение недоступного пути выдачи доступа  |
+        | access                        | failure                                     | result                                      |
+        | необходимые grants выданы     | ОС отклоняет запись ручной яркости           | ошибка записи и прочитанное состояние ОС     |
+        | необходимые grants выданы     | raw 12 принят, но создание overlay отклонено | частичный результат без действующего overlay|
+        | необходимые grants выданы     | grant overlay отозван при active dimming     | overlay снят и доступ требуется снова        |
+        | WRITE_SETTINGS отсутствует    | нет Activity для special access settings     | объяснение недоступного пути выдачи доступа  |
 
   Rule: RULE-018 Notification permission существует с API 33
     @FEAT-008 @SCN-025
