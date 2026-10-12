@@ -323,3 +323,13 @@ Compatibility requirement принято, способ и перенос workaro
 Работающий receiver или старый сохранённый negative preset сами не доказывают
 такую сессию. Nonnegative manual/Auto без неё сохраняются, Auto не запрашивается.
 [Подробный случай18](timer-and-safety-cases.md#18-защитная-последовательность-при-положительной-яркости).
+
+## Принятые уточнения исключений —2026-10-12
+
+Unknown detector означает отсутствие достоверного распознавания, а не выход из
+исключённого приложения: приостановленный overlay не возвращается по unknown.
+Установленный отзыв Usage access отключает функцию без автоматического возврата
+снятого окна; явное off — пользовательское отключение, допускающее актуальную
+negative сессию. Поздний grant не explicit enable. Timer/deadline продолжают идти.
+[Случаи15–16](../workflows/group5-widgets-and-exclusions-review.md),
+[RULE-030–031](features/permissions-and-exclusions.md). Это не no-leak гарантия.
