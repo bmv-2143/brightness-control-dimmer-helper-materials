@@ -52,10 +52,10 @@ P0 — core/safety/blocking release; P1 — основная функциона�
 | TEST-031 / SCN-031 | Fresh manual128 илиAuto; open/dismisshelp/reopen → ОС прежняя, display50илиAuto, nooverlay, help не навязывается | A/U: настоящие prefs/lifecycle/raw26/37 | P0; G07 |
 | TEST-032 / SCN-032 | -25,deadline3h,preset75,step2,hiddenrow; recreate через1h без reboot → prefs/цель/deadline прежние; варианты external sync/grant | L: virtual clock/recreation fixture; A/U: настоящий process recreation/persistence/readback | P0; G03/G07; force-stop не recreation, reboot зависит от Q-001 |
 | TEST-033 / SCN-033 | Та же операция-25 с deadline3h; redelivery через1h → один overlay/исходный deadline | L: replay/virtual time; A: настоящий restart/redelivery, если воспроизводим, с записью событий ОС | P0; G03, перезапуск не гарантируется |
-| TEST-034 / SCN-034 | Timer settings доступны, off3h;30min/24h/invalid45/nochange/Cancel → соответствующая duration, off, no crash; enable приnegative начинает срок | L: допустимые durations; U: настоящий dialog dismissal/input/recreation | P1; Q-002 |
-| TEST-035 / SCN-035 | Timer3h, -25at0; negative/duration/positive/Auto/off/externalsyncat1h → ожидаемый deadline либо cancel | L: настоящая timer logic/virtual clock; A: реальное scheduling/cancel без debug shortening | P0; G03 |
-| TEST-036 / SCN-036 | Deadline3h; доставка вовремя/4h/cancelled → Auto/nooverlay либо manual25 сохранён; до срока no effect | L: virtual clock/state/stale alarm; A/D: настоящий sleep/Doze32+/37, задержка допустима | P0; G03; реальный30min интервал требует времени, сейчас не запускался |
-| TEST-037 / SCN-037 | Events доступны, counter0; четыре заданных timestamps → Auto или нет; boundary1250/1251 сбрасывает последовательность | L: fake clock/events; A/D: настоящие screen events с provenance, не fake hardware assertion | P0; G07, OEM receiver behavior |
+| TEST-034 / SCN-034 | Доступные Настройки/duration dialog: fresh off3h/no deadline; Save30min/1h/24h безdim→duration/no countdown;45min нет в выборе; Cancel/Back/unchanged close→прежние prefs/no crash | L: допустимые durations/draft; U: настоящий dialog/Save/Cancel/Back/input/recreation | P1; DEC-016 принят; [случаи1–2,7](timer-and-safety-cases.md); Q-002 |
+| TEST-035 / SCN-035 | Главный экран/Настройки/системная панель; negative13/end16; новые same/other/slider/stepnegative14→end17; Save30min14→end14:30; Cancel/Back/unchangedSave→end16; enable14 приoff/-50→end17; enable безdim→no deadline; disable→dim/duration сохранены;0/25/Auto/external sync cancels; suspension не пауза | L: настоящая timer logic/virtual clock; A/U: реальный scheduling/cancel/controls без debug shortening; enabled/active проверяются отдельно | P0; DEC-016 принят; [случаи3–12](timer-and-safety-cases.md); G03; группа5 не принята целиком |
+| TEST-036 / SCN-036 | Любое приложение/end16: доступное expiry16 или sleep/wake17→Auto/nooverlay/no deadline/enabled; не раньше срока; oldcancelled16 после25at15→manual25; oldreplaced16 приnewend17→новая сессия продолжается; no rearm от delay | L: virtual clock/state/stale generation; A/D: настоящий sleep/Doze32+/37, non-wakeup задержка допустима, первый кадр не гарантируется | P0; DEC-016 принят; [случаи13–15](timer-and-safety-cases.md); G03; реальный30min интервал ещё не проверен |
+| TEST-037 / SCN-037 | Любое приложение, действующая negative сессия/active timer/counter0: четыре events0/1000/2000/3000 либо0/1250/2500/3750→Auto/nooverlay/no deadline;0/1500/3000/4500 илиgap1251→не сработало/исходный deadline | L: fake clock/events, без утверждения hardware происхождения; A/D: настоящие screen events и Auto/timer result | P0; DEC-017 принят только для negative; [случаи16–17](timer-and-safety-cases.md); positive результат открыт; G07 |
 | TEST-038 / SCN-038 | Defaultoff, noUsage, WRITE granted; enable/deny → disabled/объяснение, manual работает, нет Accessibility request | A/U: настоящий Usage access/AppOps; L: логика отказа | P1; G04 |
 | TEST-039 / SCN-039 | -25/timer/grants/exclusions; detectedGooglePlay → suspend; none/Auto/expiry/-50/25/revoke+exit → правильный restore либо отсутствие окна | L: fake detector только для state; A/D: настоящий detector/transitions отдельно TEST-049 | P0; G04; fake не доказывает распознавание текущего приложения |
 | TEST-040 / SCN-040 | Первое help закрыто; reopen → точные объяснения, taps7/10 не меняют право доступа | U: настоящая help/links; editorial review по RULE/P источникам, сеть не нужна | P2; представление легитимного entitlement после Q-002 |
@@ -117,7 +117,7 @@ RULE-041–RULE-048 приняты пользователем; Q-001 закры�
 
 Сверено с `BrightnessControlDimmer/TESTING.md`, `app/build.gradle.kts`, `gradle/libs.versions.toml`, AGENTS/QUALITY/MODERNIZATION на HEAD `87ef042e62c7a671fa4babfc932d27b55086efb1`: JVM Jupiter безVintage; AndroidJUnit4/AndroidJUnitRunner/ActivityScenario, UIAutomator2.4.0; accessibility34+; min26/target37/JDK21; Kover только JVM, без coverage gate. Template tests не проверяют свет. CLI/CI команды здесь не выполнялись.
 
-Порядок: после закрытия Q-001/Q-002 провести review остальных17 решений в группах3–7, сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
+Порядок: после закрытия Q-001/Q-002 провести review остальных15 решений в группах4–7 и закрыть positive manual применимость DEC-017, сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
 
 Использовать dedicated devices без существующей Legacy установки, одинаковый applicationId может уничтожить чужие данные; migration только на отдельной копии. Выбирать `ANDROID_SERIAL`, не AGP `--serial`; не запускать конкурирующие Gradle builds. После будущих запусков проверять непустые XML results/failed/skipped, не только exitcode; reports оставить по TESTING.md. Подписи/productionversion/магазин/billinginfra решить в дальнейшей работе. Настоящий test implementation и все результаты ещё отсутствуют.
 
@@ -200,3 +200,11 @@ TEST-001–TEST-003 default fixtures не подтверждают любой OE
 преобразования чтения/записи,5% floor, step/sync/boot и upgrade после выявления
 необходимости. Нестандартный обход согласовать отдельно до внедрения.
 Протоколы безопасных device испытаний и реальные результаты ещё не созданы.
+
+## Объём принятия группы3 —2026-10-12
+
+TEST-034–TEST-036 и negative сценарии TEST-037 описывают принятые17 случаев.
+Сценарий положительной manual яркости для gesture не имеет согласованного
+ожидаемого результата; не считать negative-only guard принятым. TEST-039 принят
+только в timer части suspension из случая12, остальная группа5 ещё на review.
+Это обновление плана, не написанные/пройденные тесты.

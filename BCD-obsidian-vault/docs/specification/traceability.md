@@ -39,11 +39,11 @@
 | LB-029 | DEC-013 CONFIRMED_BY_USER | FEAT-011/FEAT-012 | RULE-041–RULE-048; Q-001 CLOSED_BY_USER | SCN-051–SCN-062 | TEST-060–TEST-071 |
 | LB-030 | DEC-014 CONFIRMED_BY_USER | FEAT-011 | RULE-025 | SCN-033 | TEST-033,TEST-047 |
 | LB-031 | DEC-015 | FEAT-011 | DROP: forced crash restart, storage сохранено | — | TEST-044 |
-| LB-032 | DEC-016 | FEAT-012 | RULE-026 | SCN-034 | TEST-034 |
-| LB-033 | DEC-016 | FEAT-012 | RULE-027,RULE-025 | SCN-035,SCN-033 | TEST-035,TEST-033 |
-| LB-034 | DEC-016 | FEAT-012 | RULE-028 | SCN-036 | TEST-036,TEST-047 |
-| LB-035 | DEC-016 | FEAT-012 | RULE-026 | SCN-034 | TEST-034 |
-| LB-036 | DEC-017 | FEAT-013 | RULE-029 | SCN-037 | TEST-037,TEST-045 |
+| LB-032 | DEC-016 CONFIRMED_BY_USER | FEAT-012 | RULE-026 | SCN-034 | TEST-034 |
+| LB-033 | DEC-016 CONFIRMED_BY_USER | FEAT-012 | RULE-027,RULE-025 | SCN-035,SCN-033 | TEST-035,TEST-033 |
+| LB-034 | DEC-016 CONFIRMED_BY_USER | FEAT-012 | RULE-028 | SCN-036 | TEST-036,TEST-047 |
+| LB-035 | DEC-016 CONFIRMED_BY_USER | FEAT-012 | RULE-026 | SCN-034 | TEST-034 |
+| LB-036 | DEC-017 CONFIRMED_BY_USER для отрицательной сессии | FEAT-013 | RULE-029 | SCN-037 | TEST-037,TEST-045 |
 | LB-037 | DEC-010 | FEAT-014 | RULE-016 | SCN-022 | TEST-022 |
 | LB-038 | DEC-010 | FEAT-014 | RULE-017 | SCN-023–SCN-024 | TEST-023–TEST-024 |
 | LB-039 | DEC-010 | FEAT-014 | RULE-017 | SCN-024 | TEST-024 |
@@ -121,3 +121,13 @@ RULE-001–RULE-002/SCN-001–SCN-003/TEST-001–TEST-003 подтвержден
 E04/реестр устройств связывает мотив с преобразованиями step/sync/boot/floor.
 Новых OEM алгоритмов, RULE/SCN/TEST ID или результатов испытаний нет.
 Группы1–2 закрыты; DEC-016/DEC-017 — следующий review.
+
+## Приняты случаи группы3 —2026-10-12
+
+[Случаи1–17](timer-and-safety-cases.md#связи-и-остающийся-выбор) связаны со стабильными
+RULE-026–RULE-029/SCN-034–SCN-037/TEST-034–TEST-037. DEC-016 подтверждён;
+DEC-017 подтверждён для отрицательных сессий, positive manual применимость открыта.
+Случай11 уточняет уже принятое RULE-007/SCN-010/TEST-010. Случай12 подтверждает
+только timer часть RULE-027/SCN-039/TEST-039, не всю семантику exclusions.
+TEST-045/TEST-047 остаются будущими characterization/platform проверками;
+ничего не выполнено и общий состав этих TEST не подтверждён целиком.
