@@ -43,7 +43,7 @@
 | LB-033 | DEC-016 CONFIRMED_BY_USER | FEAT-012 | RULE-027,RULE-025 | SCN-035,SCN-033 | TEST-035,TEST-033 |
 | LB-034 | DEC-016 CONFIRMED_BY_USER | FEAT-012 | RULE-028 | SCN-036 | TEST-036,TEST-047 |
 | LB-035 | DEC-016 CONFIRMED_BY_USER | FEAT-012 | RULE-026 | SCN-034 | TEST-034 |
-| LB-036 | DEC-017 CONFIRMED_BY_USER для отрицательной сессии | FEAT-013 | RULE-029 | SCN-037 | TEST-037,TEST-045 |
+| LB-036 | DEC-017 CHANGE/CONFIRMED_BY_USER | FEAT-013 | RULE-029: только active negative session | SCN-037 | TEST-037,TEST-045 |
 | LB-037 | DEC-010 | FEAT-014 | RULE-016 | SCN-022 | TEST-022 |
 | LB-038 | DEC-010 | FEAT-014 | RULE-017 | SCN-023–SCN-024 | TEST-023–TEST-024 |
 | LB-039 | DEC-010 | FEAT-014 | RULE-017 | SCN-024 | TEST-024 |
@@ -131,3 +131,13 @@ DEC-017 подтверждён для отрицательных сессий, p
 только timer часть RULE-027/SCN-039/TEST-039, не всю семантику exclusions.
 TEST-045/TEST-047 остаются будущими characterization/platform проверками;
 ничего не выполнено и общий состав этих TEST не подтверждён целиком.
+
+## Группа3 закрыта полностью —2026-10-12
+
+Пользователь принял вариант2: защитная последовательность действует только в
+актуальной отрицательной сессии; positive manual25 остаётся25. DEC-017 теперь
+подтверждён полностью для этого контракта. [Случай18](timer-and-safety-cases.md).
+RULE-029/SCN-037/TEST-037 согласованы, прежние открытые статусы исторические.
+Следующий блок — группа4: DEC-008/DEC-009/DEC-010, затем группы5–7/MVVM план.
+15 ADOPTED_BY_AGENT/15 CONFIRMED_BY_USER;48 RULE/62 SCN/71 TEST, ID сохранены.
+Реализация/испытания/архив не начаты; архив перед реализацией после плана.
