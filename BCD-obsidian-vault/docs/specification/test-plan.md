@@ -59,8 +59,8 @@ P0 — core/safety/blocking release; P1 — основная функциона�
 | TEST-038 / SCN-038 | Принято:defaultoff/noUsage; enable/deny/cancel/missinghandler→disabled и объяснение; grantlater не enable; explicitenable нужен; обычныйmanual доступен, Accessibility/customselector отсутствуют | A/U:real Usage access/AppOps/settings/re-entry; L:permission transitions/handlerfailure | P1; G04; missinghandler моделируется отдельно |
 | TEST-039 / SCN-039 | Принятые случаи11–16:-25/end16→recognisedGooglePlay→suspend; validexit→eligible restore; Auto/25/expiry/externalSync/revokeOverlay→no oldoverlay; new-50at14→suspended/end17. Unknown/error/empty не exit; revokeUsage→disabled/noauto restore, позднийgrant не enable. Explicitoff допускаетnegative overlay/end16 даже вGooglePlay; открытиеsettings BCD самоnonexcluded, timer неrearm | L:fake detector толькоstate иclock; A/D:настоящийdetector/transitions TEST-049; U:индикацияsuspension/недоступности/explicitoff explanation | P0; G04/G03; unknown сvisibleoverlay самего не снимает; fake недоказываетrecognition |
 | TEST-040 / SCN-040 | Первое help закрыто; reopen → точные объяснения, taps7/10 не меняют право доступа | U: настоящая help/links; editorial review по RULE/P источникам, сеть не нужна | P2; представление легитимного entitlement после Q-002 |
-| TEST-041 / SCN-041 | Receiver доступен/нет, цель-25; Share/Cancel → правильный text/plain link, без settings/изменения света, отсутствие receiver объяснено | U/A: настоящий chooser и controlled receiver; injected resolver absence только для fault variant | P2; не обещать доступный listing |
-| TEST-042 / SCN-042 | RU/EN, editor25; invalid101 → локальная error/прежняя pref, доступные имена/Auto | U: настоящие locale/Compose semantics, checks34+, ручной screenreader | P1; Q-002 для editor, TEST-050 |
+| TEST-041 / SCN-041 | Ссылка/тема Share: обычный выбор/отмена без error, отказ запуска BCD с сообщением, отдельный send failure внешнего приложения без ложной доставки. Обоснованное взаимодействие8Г: событие конца timer при системной панели, исходный срок не пауза/rearm; остальные варианты не требуют общей сессии−25 | U/A: настоящий chooser и controlled receiver, проверка payload; injected launch failure только технический вариант, не пользовательская последовательность | P2; группа6 ещё review; форма error UI не выбрана, listing не обещан |
+| TEST-042 / SCN-042 | RU/EN: экран числового значения обычной кнопки25, цифровая клавиатура; Legacy101 отклоняется при upper100. Для новой версии число вне диапазона выбрать после группы7. Прежняя кнопка25/локальная ошибка/достижимая отмена; имена/Auto/sign/units. Non-integer validator faults отдельно от обычного UI ввода | U: настоящие locale/поле/клавиатура/Compose semantics, checks34+, ручной screenreader; L: validator отдельные нецелые inputs | P1; SCN-042 пример101 не принимает новый диапазон; TEST-050 |
 | TEST-043 / SCN-043 | API26/37,target37, offline, grants;25/-25/Auto →63/12+overlay/Auto без ожидания сети | A/U: настоящий offline emulator; D: дисплей; отключённая монетизация не доказывает её будущую политику | P0; G01/G02/G03 |
 
 ## Дополнительные проверки и characterization
@@ -252,3 +252,15 @@ TEST-026–030/038–039/049 уточнены, TEST-044 принят в объё
 активный конец16:00 не переносится. Это уточнение принятого RULE-026, не новый
 диапазон/таймер и не выполненный тест. [Источник](source-evidence.md),
 [случай7](timer-and-safety-cases.md#7-отмена-или-закрытие-окна).
+
+## Минимальный контекст случаев группы6 —2026-10-13
+
+[Случаи1–12](../workflows/group6-help-sharing-and-accessibility-review.md) переработаны
+по поручению пользователя, без принятия группы6 и без превращения каждого пункта
+в исчерпывающую тестовую матрицу. Прямо требуется цифровая клавиатура.
+Значимые проверки выбирать по классам значений, границам согласованного диапазона,
+переходам и риску связи: возврат MainActivity/повтор команды, timer при help/Share,
+пересоздание после locale, границы редактора и чтение ошибки.
+Premium/таймер/grants/исключения не перемножать с каждым текстовым экраном.
+Комбинаторное покрытие — только для относящихся факторов/допустимых сочетаний;
+pairwise не универсально достаточен. 30 DEC/48 RULE/62 SCN/71 TEST, ID сохранены.

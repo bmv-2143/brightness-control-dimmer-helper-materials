@@ -26,6 +26,9 @@ Feature: Понятный интерфейс и заданные границы 
         | доступен    | chooser с https://play.google.com/store/apps/details?id=net.humblegames.brightnesscontroldimmer             |
         | отсутствует | объяснение отсутствия получателя без crash                                                               |
 
+  # SCN-042: число 101 иллюстрирует upper100 Legacy; новый диапазон editor/clamp
+  # DEC-004/006 группы7 ещё не принят. Число вне нового диапазона выбрать после review.
+  # Цифровая клавиатура прямо потребована пользователем; abc не обычный UI-сценарий.
   Rule: RULE-034 Язык не меняет правила и результат
     @FEAT-021 @SCN-042
     Scenario Outline: Объяснить ошибку и озвучить controls на языке ОС
