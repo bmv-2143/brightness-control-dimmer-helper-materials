@@ -333,3 +333,15 @@ Unknown detector означает отсутствие достоверного 
 negative сессию. Поздний grant не explicit enable. Timer/deadline продолжают идти.
 [Случаи15–16](../workflows/group5-widgets-and-exclusions-review.md),
 [RULE-030–031](features/permissions-and-exclusions.md). Это не no-leak гарантия.
+
+## Доступность UI и доступ AccessibilityService —2026-10-13
+
+В [группе6](../workflows/group6-help-sharing-and-accessibility-review.md) доступность
+интерфейса означает читаемый текст, смысловые имена/роли/состояния/ошибки и достижимые
+действия, включая использование TalkBack пользователем. Это не запрос grant BCD
+для собственного AccessibilityService и не восстановление detector DEC-020.
+Semantics — сведения об элементе для служб доступности/тестов; проверка дерева
+не доказывает опыт TalkBack на устройстве или launcher/notification host.
+Sharesheet — системная поверхность выбора пути передачи; открытие/выбор
+приложения не сами по себе доказательство доставки сообщения адресату.
+[Первичные источники и границы](source-evidence.md#исследование-группы6-помощь-share-и-доступность-2026-10-13).

@@ -577,3 +577,184 @@ dismiss consumer и вызывающий putInt в исходниках E23. Э�
 Cancel/Back/закрытие безопасны, prefs и прежний срок сохраняются. Явный вариант
 добавлен в [TEST-034–035](test-plan.md)/SCN-034–035 и [случай7](timer-and-safety-cases.md#7-отмена-или-закрытие-окна).
 Нового runtime BUG сообщения нет; эта запись не объявляет исправленный APK.
+
+## Исследование группы6: помощь, Share и доступность —2026-10-13
+
+[Случаи для согласования](../workflows/group6-help-sharing-and-accessibility-review.md).
+DEC-024/025/026/027 остаются ADOPTED_BY_AGENT; текущие22 подтверждённых/8 предложенных
+DEC не меняются. Группы1–5 и коммерческая политика закрыты. Этот проход изучает
+код и причины Legacy, а не подтверждает новый UI или результаты испытаний.
+Legacy HEAD: cd7696cd04705fa48a2c115addf98ae6191bfdd9. J/R/T имеют определения
+в начале документа. Просмотрены E35–E37, связанные E10/E12/E30/E38/E39,
+production call sites, manifest, ресурсы, Git diffs и исходные ссылки.
+
+### E35/E12: первое открытие, навигация и прежний обход прокрутки
+
+J/ui/MainActivity.java:736–750,792–801 сначала в первом loadPrefs запрашивает Auto,
+затем openHelpIfFirstStart записывает KEY_IS_FIRST_START=false до запуска help.
+Флаг общий, не означает просмотр всех страниц. Ручной вход:
+J/ui/MainActivity.java:1185–1192 и R/layout/activity_main.xml:77–85.
+Первая light command Legacy уже отвергнута ранее принятым RULE-023; здесь она
+не предлагается снова. В новой версии первый пропускаемый вход и manual reopen
+сохраняют назначение help, число экранов не фиксируется.
+
+J/ui/help/FragmentScreenSlidePage.java:17–26 перечисляет именно layouts1–6;
+0/7 не входят в этот массив. Комментарий adapter о5 страницах устарел,
+не доказательство числа экранов. Коммит10934e78202761e75ff3a3420411fb1956e55e12
+от2021-12-08 меняет последовательность/число страниц; название говорит об удалении
+первой страницы, но полного объяснения продуктового мотива нет.
+Коммит7acd2d5cf9f654262d8e5b495742c0e0da996031 от2021-12-09 добавляет Next:
+fragment назначает listener, он вызывает ActivityHelp.openNextPage, последняя
+проверяет последнюю страницу. Это действующая связь, не один недостижимый XML
+callback. На последней странице R/layout/fragment_quick_start_6.xml:10–16
+кнопка Done вызывает finish; Back обрабатывается обычным Activity, собственного
+переопределения Back в ActivityHelp нет.
+
+В R/layout/fragment_quick_start_btn_next.xml:10 текст Next задан прямо в XML,
+без русского ресурса; Done имеет RU/EN ресурсы. LinkMovementMethod назначается
+только найденному txt_fragment_content_1 (J/ui/help/FragmentScreenSlidePage.java:48–51).
+Имена первого/второго текстовых блоков в layouts различаются; сам этот helper
+не доказывает, что все тексты/иллюстрации являются ссылками. Просмотренные
+help strings не содержат href; инструкции открыть настройки — текст.
+Новые внешние help links этим review не вводятся.
+
+Исторический layout fragment_quick_start_1 на a283c18e от2015-02-06 содержит
+явный комментарий: избыточные вложения/дублирование оставлены, потому что иначе
+верхняя часть содержимого ScrollView уходит за экран и не возвращается прокруткой.
+a283c18e — переименование пакетов/модуля, не установленная дата появления ошибки.
+Коммит10934e78 переносит эту заметку; f3819b751f740c4bff555d07b4a0fc8ad30616fc
+от2021-12-08 удаляет её и перерабатывает вложенность с пометкой WIP.
+Не указаны конкретный телефон/API, первопричина и проверка устранения.
+Не объявлять прежние вложения бессмысленными и не копировать View hierarchy
+в Compose: сохранить требование достижимости начала/конца текста и выхода при
+большом шрифте, узком/повёрнутом окне, с отдельной будущей проверкой.
+
+### E35/E30: скрытый Premium имеет установленное назначение
+
+J/ui/help/ActivityHelp.java:17–25 прямо поясняет назначение: тестирование и друзья,
+без покупки. Первое добавление92da49f86e0a9b2c1297a3a155ca4828176eb7b2
+от2015-02-09 уже содержит это пояснение и записи true на7/false на10.
+Это не найденная догадкой причина и не просто deadcode.
+
+Действующий R/layout/fragment_quick_start_1.xml:23–31 имеет onClick на launcher
+image; c0cfe92d от2021-12-16 добавляет это изображение на действующую страницу.
+ActivityHelp:61–76 считает вызовы и пишет Const.IS_PREMIUM с Toast.
+FragmentScreenSlidePage:36 сбрасывает static counter при создании fragment:
+это не гарантия, что произвольные7 нажатий через переходы страниц дадут тот же итог.
+Обработчик в main source set, без BuildConfig.DEBUG guard. Legacy не запускался;
+статическая достижимость не runtime воспроизведение конкретной серии taps.
+
+Тот же IS_PREMIUM пишет J/app/InAppPurchaseManager.java:59,96. Поэтому один старый
+boolean не устанавливает происхождение доступа: paid purchase, промо, скрытые
+нажатия или cache. Предложение DEC-025 убрать переключатель из пользовательской
+справки не разрешает стереть прежние подтверждённые оплаченные права и не меняет
+принятые restore/ошибка Billing/промо RULE-036–040. Миграция происхождения/fixture
+остаётся G06/G07; новая схема хранения ещё не выбрана. Отдельного нового способа
+подарить Premium друзьям этим review не предложено.
+
+### E36/E38/E39: Share и неизвестный параметр ah
+
+J/ui/MainActivity.java:929–946 создаёт ACTION_SEND/text/plain, EXTRA_TEXT со store
+URL и локализованный EXTRA_SUBJECT; chooser title составлен из RU/EN ресурсов.
+Метод не добавляет prefs, raw, overlay, grants или файлы. Вызывает createChooser/
+startActivity без отдельной обработки отказа. Это не доказывает crash при любом
+пустом списке получателей: системный Sharesheet и actual send receiver различаются.
+
+29e3a0ac02e47bfddd0ac047d947bb237ce6878f от2015-02-06 заменяет временную ссылку
+на Play URL с id=net.humblegames.brightnesscontroldimmer и ah уже тогда.
+e05af39872ef0fdf1c67ba316b0855ffea2c2a41 от2015-03-11 переносит её в
+build-specific constant и добавляет Amazon. Текущие debug/googleplay
+BuildSpecificConst.java:9 сохраняют ah; Amazon содержит другой store URL,
+но настроенный выпуск Amazon не установлен E38. Объяснение назначения ah в
+просмотренных комментариях/этих diffs не найдено. Не называть его доказанным
+трекером, обходом или бесполезным параметром. P11 документирует ссылку по id;
+предложение перейти к этому формату требует согласования DEC-026.
+Доступность фактического listing для аккаунта/региона здесь не проверялась.
+
+P10 подтверждает системный Sharesheet для ACTION_SEND и text/plain. Его открытие
+не доказательство доставки сообщения; не вводить собственную отправку адресату.
+P12 различает запуск Activity и запрос её видимости: ограниченная visibility
+может повлиять на предварительный запрос. Не выбирать реализации «один
+resolveActivity==null всегда означает нет получателя» без платформенной проверки.
+Будущий контракт: доступный путь ОС, безопасный отказ/возврат, без утверждения
+отправки по одному открытию. T/MainActivityTest.java:327–332 имеет два fail
+placeholder (в одном автор просит UIAutomator вместо Robotium), не выполненные
+проверки Sharesheet/Intent. Это историческое ограничение теста, не доказательство
+современной невозможности тестировать передачу controlled receiver.
+
+R/values/styles.xml:18–24 ссылается на https://stackoverflow.com/a/15109761/3452230
+для стиля Share, задаёт размеры/background. Попытка прочитать исходную ссылку
+2026-10-13 вернула Cache miss. Содержимое ответа/его мотив не проверены;
+не приписывать этому стилю специальный OEM workaround.
+
+### E37/E10: локализация, labels и перекрытие ошибки
+
+Чтение XML показывает141 string entries в values/strings.xml и126 в values-ru;
+у русского набора нет дополнительных key,15 default keys отсутствуют в нём.
+Среди них технические IDs/values и пользовательские строки; это не15 доказанных
+видимых untranslated экранов. Next hardcoded установлен отдельно выше.
+Ресурс user_input_error_not_a_number в RU содержит опечатку «челое».
+Ключи и значения prefs не должны переводиться вместе с пользовательским текстом.
+P13 объясняет default resources/подбор языка; полноценный RU/EN текст новой версии
+и default English предлагаются отдельно от копирования всего Legacy набора.
+Новый язык/собственный language selector не вводится.
+
+R/layout/activity_main.xml:56–85 задаёт image-only Settings/Share/Help без
+contentDescription; styles.xml:20–24 этого описания не добавляет. Поиск main Java
+не нашёл setContentDescription/setAccessibility/announceForAccessibility.
+Это отсутствие явно заданных labels в проверенных местах, не запись о том,
+что TalkBack на конкретной ОС уже проверен и читает совершенно пустое имя.
+P14 описывает семантику имени/роли/состояния/ошибки и действие; доступность UI
+не равна требованию выдать BCD grant для AccessibilityService, удалённого DEC-020.
+
+J/ui/SetButtonValueActivity.java:327–359,408–433 использует ресурсы ошибок,
+shake и setError. Комментарий перед showBadInputHint прямо сообщает: увеличить
+bottom margin, иначе сообщение перекроет OK. Заметка присутствует на a283c18e;
+полный первоначальный commit/устройство не установлены. Исходная ссылка
+https://droid-blog.net/2012/05/15/two-simple-ways-to-make-your-users-aware-of-incorrect-input/
+прочитана2026-10-13: автор статьи описывает shake и EditText.setError как уведомление
+об ошибке без отдельного блокирующего AlertDialog. Это первичный исторический
+пример, не доказательство нынешней необходимости такого margin в Compose.
+Комментарии под статьёй не являются результатами BCD.
+Предлагаемое требование: содержательная локальная ошибка, доступная screenreader,
+кнопки исправления/выхода остаются достижимы; shake/цвета/фиксированный отступ
+не утверждены как новая реализация.
+
+### Текст помощи и границы проверки
+
+R/values/strings.xml:115,119 и RU:97,102 обещают неостановку при icon checkbox
+и4 POWER за5s. Назначение — объяснить быстрый доступ/защиту, но текст не доказывает
+платформенную гарантию. Соответствующие принятые RULE-014/025/029 уже точнее:
+обязательное service notice отдельно, остановку ОС не исключать, screen events
+с соседним порогом и только актуальная отрицательная сессия. Это не повторное
+согласование групп3–4.
+
+d3d055ec679d5ec35eebb38ef6f65db331691d03 от2022-03-01 (BCD-14) исправляет RU/EN
+описания widgets и убирает старые обещания lockscreen в действующем widget тексте.
+Layouts0/7 и старый lockscreen текст сохраняются в resources, но не активном
+adapter. ecc5132825a927befb7fc2d43ca499b97edb544f от2021-12-16 убирает изображение
+из help6 и заменяет инструкции; 2d43ad96/1253eb53 от2022-01-30 уточняют текст
+special apps. Не копировать старые screenshots/инструкции по прежним controls
+до выбора макета; сохранить их информационное назначение и принятые ограничения.
+BUG-001 остаётся открытым, неизвестная причина не должна превращаться в совет
+«выдайте grant/переустановите BCD — это исправит Android16».
+
+Новый проект TESTING.md на87ef042e62c7a671fa4babfc932d27b55086efb1 содержит
+Compose semantics/Accessibility Test Framework checks34+ и UIAutomator, но лишь
+template smoke. P15 требует сочетать автоматические проверки с ручным TalkBack/
+Switch Access. Наличие dependencies/семантического дерева не подтверждает
+читаемость widget/notification host или новой помощи. Ни сборки, ни Legacy/новая
+версия, ни parser/device/accessibility tests здесь не запускались.
+
+### Первичные платформенные источники группы6
+
+Сверка2026-10-13; новые P не меняют статусы DEC или требования реализации.
+
+| Код | Подтверждённое содержание и границы | Источник |
+|---|---|---|
+| P10 | ACTION_SEND/EXTRA_TEXT/text/plain и createChooser открывают системный Sharesheet; EXTRA_SUBJECT optional. Наличие chooser не устанавливает фактическую доставку адресату | [Android Sharesheet](https://developer.android.com/develop/ui/compose/sharing/send) |
+| P11 | Документированный Play listing URL содержит fully qualified package name в id. Значение Legacy ah и доступность BCD listing этим не установлены | [Linking to Google Play](https://developer.android.com/distribute/marketing-tools/linking-to-google-play) |
+| P12 | Для межприложного запуска учитывать ActivityNotFoundException; предварительные queries подчинены visibility. Фактический empty Sharesheet не исследован на устройстве | [Package visibility use cases](https://developer.android.com/training/package-visibility/use-cases) |
+| P13 | Default resources должны содержать необходимые строки; Android выбирает локализованные ресурсы и fallback. Точность RU/EN нового UI ещё проверяется | [Localize your app](https://developer.android.com/guide/topics/resources/localization) |
+| P14 | Semantics передаёт meaning/name/role/state/action/error службам доступности; встроенные компоненты не заменяют проверку собственного UI | [Compose semantics](https://developer.android.com/develop/ui/compose/accessibility/semantics) |
+| P15 | Автоматические accessibility checks применяются вместе с ручным TalkBack/Switch Access. Template/tests infrastructure не доказательство доступности BCD | [Accessibility testing](https://developer.android.com/develop/ui/compose/accessibility/testing) |
