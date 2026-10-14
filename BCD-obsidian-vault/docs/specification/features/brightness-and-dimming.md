@@ -11,7 +11,7 @@ CAP-001. Default — документированная шкала255; сохр�
 | RULE-003 / FEAT-002 / DEC-002 | При p<0: MANUAL/raw12 и чёрный overlay с эффективным alpha=round(abs(p)*255/100)/255 в области приложения, где ОС допускает overlay. Touch к нижнему приложению должен проходить при допустимой opacity ОС, overlay не забирает focus. Если ОС/permission не допускает результат, показать отказ/partial failure вместо «применено», убрать неработоспособное окно; не скрыто уменьшать alpha | -1→3/255;-25→64/255;-75→191/255; переход-25→0 без overlay. На31+ учитывать maximum obscuring opacity, не перемножать второй искусственный multiplier. Protected окна могут скрыть overlay |
 | RULE-004 / FEAT-003 / DEC-003 | Успешный Auto из любой поверхности запрашивает MODE_AUTOMATIC, убирает overlay и cancels timer; все текущие mode labels показывают Auto, separate last numeric не меняет это | Auto изnegative иpositive; повторAuto без нового таймера. raw в Auto может меняться ОС |
 | RULE-005 / FEAT-003 / DEC-003 | +/- в Auto читает текущий raw; base=round(raw*100/255), затем RULE-006, перевод в numeric manual. При невозможности чтения отклонить шаг с ошибкой, не использовать stale last numeric | raw128, step+5→55; raw255,-5→95; oldnumeric-50 не база. Unreadable остаётсяAuto |
-| RULE-006 / FEAT-004 / DEC-004 | Numeric +/- вычисляет clamp(p+signedStep,-75,100); step определяется выбранной поверхностью. Граница без wrap; режим/overlay по знаку результата | 98+5→100;-73-5→-75;-2+5→3;0-5→-5. Повторplus на100 остаётся100 |
+| RULE-006 / FEAT-004 / DEC-004 | Принято2026-10-14. Numeric +/- вычисляет clamp(p+signedStep,-75,100); step своей поверхности, без wrap. Повтор на границе сохраняет число; новая negative команда начинает полный timer по RULE-026, включая повтор-75 | 98+5→100;100+5→100;-73-5→-75;-75-5→-75;-2+5→3;0-5→-5. При timer3h новая команда-75 в15:10 даёт18:10 |
 | RULE-007 / FEAT-005 / DEC-005 | При sync=true (default) внешнее изменение режима/raw обновляет все labels, снимает собственный overlay/cancels timer; manual p=round(raw*100/255), Auto отдельный. При sync=false сохраняется requested p, но read observed OS отдельно; самопроизвольной повторной записи ОС нет. Собственные callbacks не должны отменять dimming или создавать цикл | External Auto приnegative→Auto/nooverlay/notimer; external manual raw128→50. Own-write raw12 не превращает-25 в5. sync=false external raw не отыгрывается назад |
 
 Округление round для неотрицательных величин здесь: ближайшее целое, ровно половина вверх; floor — вниз. Основание — E02/E03, применение к шкале255 — явное изменение DEC-001. Не вводится формула физической luminance. Таймер/исключения могут временно менять наличие overlay по отдельным правилам, сохраняя numeric цель; отображать suspension.
@@ -61,3 +61,7 @@ DEC-001 принят. Формулы/default примеры raw12/63/255 сох�
 Это относится также к step/sync, базе dimming, boot restore и миграции,
 не означает уже утверждённый универсальный reflection или OEM adapter.
 [Исторический реестр](../source-evidence.md#реестр-нестандартных-шкал-и-обходов-2026-10-09).
+
+## Принят clamp группы7 —2026-10-14
+
+[Случай1](../../workflows/group7-controls-and-platform-review.md) подтверждает DEC-004/RULE-006. Общая шкала группы1 и negative rearm группы3 не пересматриваются; Android испытаний нет.
