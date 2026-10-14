@@ -59,8 +59,8 @@ P0 — core/safety/blocking release; P1 — основная функциона�
 | TEST-038 / SCN-038 | Принято:defaultoff/noUsage; enable/deny/cancel/missinghandler→disabled и объяснение; grantlater не enable; explicitenable нужен; обычныйmanual доступен, Accessibility/customselector отсутствуют | A/U:real Usage access/AppOps/settings/re-entry; L:permission transitions/handlerfailure | P1; G04; missinghandler моделируется отдельно |
 | TEST-039 / SCN-039 | Принятые случаи11–16:-25/end16→recognisedGooglePlay→suspend; validexit→eligible restore; Auto/25/expiry/externalSync/revokeOverlay→no oldoverlay; new-50at14→suspended/end17. Unknown/error/empty не exit; revokeUsage→disabled/noauto restore, позднийgrant не enable. Explicitoff допускаетnegative overlay/end16 даже вGooglePlay; открытиеsettings BCD самоnonexcluded, timer неrearm | L:fake detector толькоstate иclock; A/D:настоящийdetector/transitions TEST-049; U:индикацияsuspension/недоступности/explicitoff explanation | P0; G04/G03; unknown сvisibleoverlay самего не снимает; fake недоказываетrecognition |
 | TEST-040 / SCN-040 | Первое help закрыто; reopen → точные объяснения, taps7/10 не меняют право доступа | U: настоящая help/links; editorial review по RULE/P источникам, сеть не нужна | P2; представление легитимного entitlement после Q-002 |
-| TEST-041 / SCN-041 | Ссылка/тема Share: обычный выбор/отмена без error, отказ запуска BCD с сообщением, отдельный send failure внешнего приложения без ложной доставки. Обоснованное взаимодействие8Г: событие конца timer при системной панели, исходный срок не пауза/rearm; остальные варианты не требуют общей сессии−25 | U/A: настоящий chooser и controlled receiver, проверка payload; injected launch failure только технический вариант, не пользовательская последовательность | P2; группа6 ещё review; форма error UI не выбрана, listing не обещан |
-| TEST-042 / SCN-042 | RU/EN: экран числового значения обычной кнопки25, цифровая клавиатура; Legacy101 отклоняется при upper100. Для новой версии число вне диапазона выбрать после группы7. Прежняя кнопка25/локальная ошибка/достижимая отмена; имена/Auto/sign/units. Non-integer validator faults отдельно от обычного UI ввода | U: настоящие locale/поле/клавиатура/Compose semantics, checks34+, ручной screenreader; L: validator отдельные нецелые inputs | P1; SCN-042 пример101 не принимает новый диапазон; TEST-050 |
+| TEST-041 / SCN-041 | Ссылка/тема Share: обычный выбор/отмена без error, отказ запуска BCD с сообщением, отдельный send failure внешнего приложения без ложной доставки. Обоснованное взаимодействие8Г: событие конца timer при системной панели, исходный срок не пауза/rearm; остальные варианты не требуют общей сессии−25 | U/A: настоящий chooser и controlled receiver, проверка payload; injected launch failure только технический вариант, не пользовательская последовательность | P2; группа6 принята2026-10-14; форма error UI не выбрана, listing не обещан |
+| TEST-042 / SCN-042 | RU/EN: экран числового значения обычной кнопки25, цифровая клавиатура; Legacy101 отклоняется при upper100. Для новой версии число вне диапазона выбрать после группы7. Прежняя кнопка25/локальная ошибка/достижимая отмена; имена/Auto/sign/units. Non-integer validator faults отдельно от обычного UI ввода | U: настоящие locale/поле/клавиатура/Compose semantics, checks34+, ручной screenreader; L: validator отдельные нецелые inputs | P1; число101 — Legacy; пример новой версии зависит от группы7; TEST-050 |
 | TEST-043 / SCN-043 | API26/37,target37, offline, grants;25/-25/Auto →63/12+overlay/Auto без ожидания сети | A/U: настоящий offline emulator; D: дисплей; отключённая монетизация не доказывает её будущую политику | P0; G01/G02/G03 |
 
 ## Дополнительные проверки и characterization
@@ -117,7 +117,7 @@ RULE-041–RULE-048 приняты пользователем; Q-001 закры�
 
 Сверено с `BrightnessControlDimmer/TESTING.md`, `app/build.gradle.kts`, `gradle/libs.versions.toml`, AGENTS/QUALITY/MODERNIZATION на HEAD `87ef042e62c7a671fa4babfc932d27b55086efb1`: JVM Jupiter безVintage; AndroidJUnit4/AndroidJUnitRunner/ActivityScenario, UIAutomator2.4.0; accessibility34+; min26/target37/JDK21; Kover только JVM, без coverage gate. Template tests не проверяют свет. CLI/CI команды здесь не выполнялись.
 
-Порядок: после закрытия Q-001/Q-002 провести review остальных8 решений в группах6–7 (группы1–5 закрыты), сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
+Порядок: после закрытия Q-001/Q-002 провести review остальных4 решений группы7 (группы1–6 закрыты), сохранив историю → оценить G03/G04/G06/platform/store feasibility → минимальные проверки чистой логики с SCN и characterization fixtures → необходимые реальные Android/UI/D/store проверки. Независимую логику можно проверять до завершения platform feasibility. Порядок не требует написать все unit-тесты перед любой acceptance-проверкой.
 
 Использовать dedicated devices без существующей Legacy установки, одинаковый applicationId может уничтожить чужие данные; migration только на отдельной копии. Выбирать `ANDROID_SERIAL`, не AGP `--serial`; не запускать конкурирующие Gradle builds. После будущих запусков проверять непустые XML results/failed/skipped, не только exitcode; reports оставить по TESTING.md. Подписи/productionversion/магазин/billinginfra решить в дальнейшей работе. Настоящий test implementation и все результаты ещё отсутствуют.
 
@@ -264,3 +264,16 @@ TEST-026–030/038–039/049 уточнены, TEST-044 принят в объё
 Premium/таймер/grants/исключения не перемножать с каждым текстовым экраном.
 Комбинаторное покрытие — только для относящихся факторов/допустимых сочетаний;
 pairwise не универсально достаточен. 30 DEC/48 RULE/62 SCN/71 TEST, ID сохранены.
+
+## Принятый объём группы6 —2026-10-14
+
+Пользователь 2026-10-14: «Принимаем все предложения 1-12». Приняты [переработанные случаи группы6](../workflows/group6-help-sharing-and-accessibility-review.md): DEC-024–DEC-027 CONFIRMED_BY_USER. Теперь26 CONFIRMED_BY_USER/4 ADOPTED_BY_AGENT/0 PENDING_USER; остаются DEC-004/006/007/028 группы7. Всего30 DEC/48 RULE/62 SCN/71 TEST; ID сохранены. Принятие поведения не подтверждает реализацию или испытания.
+
+TEST-040/041/042 и часть TEST-044 об отсутствии скрытых taps относятся
+к принятому поведению. TEST-050 — только языки/доступность, а платформенная
+часть DEC-028 остаётся группе7. Взаимодействия случаев2/3/8Г/10 используют
+TEST-031/035/036 и соответствующие существующие SCN; новых ID нет.
+Нельзя подменять отправку ошибкой запуска BCD, отмене не нужен error.
+У всех пользователей taps не выдают/отзывают право, оплаченные права/restore
+сохраняются. Числовой тест новой версии выбирается после диапазона группы7.
+Android/device/TalkBack/parser execution не выполнялись.

@@ -56,10 +56,10 @@
 | LB-046 | DEC-021 | FEAT-016 | RULE-037 | SCN-046 | TEST-055; editor semantics TEST-013–TEST-015 |
 | LB-047 | DEC-022 | FEAT-017 | RULE-038 | SCN-047 | TEST-056 |
 | LB-048 | DEC-023 | FEAT-018 | RULE-039,RULE-040 | SCN-048–SCN-049 | TEST-057–TEST-058 |
-| LB-049 | DEC-024 | FEAT-019 | RULE-032 | SCN-040 | TEST-040 |
-| LB-050 | DEC-025 | FEAT-019 | DROP: hidden Premium taps | — | TEST-040,TEST-044 |
-| LB-051 | DEC-026 | FEAT-020 | RULE-033 | SCN-041 | TEST-041 |
-| LB-052 | DEC-027 | FEAT-021 | RULE-034 | SCN-042 | TEST-042,TEST-050 |
+| LB-049 | DEC-024 CONFIRMED_BY_USER | FEAT-019 | RULE-032 | SCN-040 | TEST-040 |
+| LB-050 | DEC-025 CONFIRMED_BY_USER | FEAT-019 | DROP: hidden Premium taps | — | TEST-040,TEST-044 |
+| LB-051 | DEC-026 CONFIRMED_BY_USER | FEAT-020 | RULE-033 | SCN-041 | TEST-041 |
+| LB-052 | DEC-027 CONFIRMED_BY_USER | FEAT-021 | RULE-034 | SCN-042 | TEST-042,TEST-050 |
 | Нет LB: заданные min/target/toolchain, TESTING.md и offline независимость E05 | DEC-028 | FEAT-021 / все CAP | RULE-035 | SCN-043 | TEST-043,TEST-047,TEST-050 |
 
 ## Где находятся RULE/SCN
@@ -168,3 +168,15 @@ SCN-026/TEST-026/028, без вывода о причине. Реальные de
 DEC-016/RULE-026/SCN-034–035/TEST-034–035: безопасны открытие и Save/Cancel/Back/
 закрытие без движения slider и без callback изменения. Число и ID артефактов
 не меняются; runtime воспроизведение Legacy и проверка новой версии не выполнены.
+
+## Принята группа6 —2026-10-14
+
+Пользователь 2026-10-14: «Принимаем все предложения 1-12». Приняты [переработанные случаи группы6](../workflows/group6-help-sharing-and-accessibility-review.md): DEC-024–DEC-027 CONFIRMED_BY_USER. Теперь26 CONFIRMED_BY_USER/4 ADOPTED_BY_AGENT/0 PENDING_USER; остаются DEC-004/006/007/028 группы7. Всего30 DEC/48 RULE/62 SCN/71 TEST; ID сохранены. Принятие поведения не подтверждает реализацию или испытания.
+
+Связи: случаи1–5 → DEC-024/RULE-032/SCN-040/TEST-040; случай6 → DEC-025
+и принятая часть TEST-044; случаи7–8 → DEC-026/RULE-033/SCN-041/TEST-041;
+случаи9–12 → DEC-027/RULE-034/SCN-042/TEST-042 и доступность TEST-050.
+Взаимодействия используют ранее принятые правила сессии/таймера и TEST-031/035/036,
+не принимают их заново. E10/E12/E35–E38 и P10–P15 остаются основаниями
+кода/истории/документации, не доказательствами запуска. BUG-001–004 открыты,
+причина BUG-001 неизвестна. UI-формы и диапазон группы7 не выбраны.
