@@ -449,4 +449,3 @@ Gherkin декларативный, parser execution/executable acceptance не 
 Навык chat-handoff-summary применён для этой передачи:
 C:/Users/mike/.codex/skills/chat-handoff-summary/SKILL.md.
 Следующий handoff уместен на границе крупного этапа; пользователь сам открывает чат.
-
