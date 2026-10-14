@@ -822,3 +822,167 @@ BCD и send failure внешнего приложения различаются
 не принимают их заново. E10/E12/E35–E38 и P10–P15 остаются основаниями
 кода/истории/документации, не доказательствами запуска. BUG-001–004 открыты,
 причина BUG-001 неизвестна. UI-формы и диапазон группы7 не выбраны.
+
+## Исследование группы7 —2026-10-14
+
+Основание [предложений1–13](../workflows/group7-controls-and-platform-review.md).
+Legacy HEAD cd7696cd04705fa48a2c115addf98ae6191bfdd9; новый проект
+83fa6da3a61fdcb8301e97396f0034e7ee07f270. Материалы до исследования:
+fe3dd6d4e10d300a223763b13f50a43c6e0c95e8. Повторно прочитаны AGENTS материалов,
+текущие DEC/обзор/реестр BUG и связанные RULE/SCN/TEST/LB/gaps;
+исследованы production callers, XML/manifest, комментарии и Git.
+Android/Legacy/Gherkin parser не запускались. DEC-004/006/007/028 не приняты.
+
+### E01/E02/E08: ограничение шага и разные источники
+
+`J/service/BrightnessState.java:35–47` складывает p и signed step,
+возвращает100 при верхнем выходе и DEFAULT_MIN_BRIGHTNESS=-75 при нижнем;
+wrap отсутствует. a9172acc8e4e74aec774f7ce7ae20175c0180ade от2022-02-17
+добавляет общий метод. `J/service/DimmerService.java:442–450,517–552,558–567,987–990`:
+main читает KEYS_BTNS_VALUES[8]/default5; notification/controls widget
+читает последний общий ключ/default5; отдельный +/- widget получает signed
+step в Intent. `J/utils/Utils.java:506–523,559–664` подтверждает маршруты.
+
+`J/utils/Const.java:30,48,66–84,101–128` задаёт8 main presets и4 общих,
+последние элементы массивов — шаги, а не девятый/пятый preset.
+WIDGET_PLUS_MINUS_DEFAULT_STEP=10 используется production configure/load;
+DEFAULT_WIDGET_PLUS_MINUS_BTN_STEP=5 найден только в закомментированном
+преобразовании slider, не действующий default отдельного widget.
+Нет оснований унифицировать шаги или выводить их из одинакового названия.
+Мотив выбора конкретных defaults/верхнего step50 в просмотренных diff не установлен.
+
+### E09/E10/E11: редакторы и реальный возврат
+
+`J/ui/MainActivity.java:260,334–337,370–418,681–695`:
+setupBrightnessButtons вызывается до назначения long listener +/-;
+длинный tap main preset передаёт его index, long +/- общий index8.
+Tap и long tap различаются. `J/ui/settings/FragmentSettings.java:167–205`:
+обычный tap одного из четырёх preference либо preference шага открывает
+SetButtonValueActivity с общим index и признаками notification/step.
+`R/xml/preferences.xml:71–103` имеет устаревшие summary; onResume загружает
+runtime значения из общих ключей, поэтому XML не доказательство defaults.
+
+`J/ui/SetButtonValueActivity.java:103,141–154,259–365,485–518`:
+пустое поле с hint прежнего значения; done на пустом finish без записи;
+cancel finish; valid integer сохраняет выбранный main/shared ключ и finish;
+invalid остаётся в editor. Preset lower bound читает KEY_MIN_BRIGHTNESS_ALLOWED,
+default-75; production writer этого ключа обратным поиском не найден.
+Шаг1..50 не значение яркости. `R/layout/activity_set_button_value.xml:81–122`:
+numberSigned, реальные Ok/Cancel вызывают done/cancel. ABC/дроби не выдаются
+за обычные пользовательские входы (принятое наблюдение группы6).
+История66846f73ea49d5ae899cdc9ee36da20be5140556 от2014-05-22 явно описывает
+изменение labels. 9393f1b65518740923b7048c7300ed4c792197a2 иbc2d20f6
+от2019-02-26/27 добавляют настройку отдельного общего notification/widget шага;
+b4b62156cf06725d9c5e95e4ef720afdba9a619c меняет предел отдельного widget на1..50.
+
+Однако **сам save не команда света не означает отсутствие эффекта всего возврата
+Legacy**: `J/ui/MainActivity.java:596–598,739–781` вызывает loadBrightnessFromPrefs
+и повторную команду; `FragmentSettings.java:286–304` прямо комментирует запуск
+service для обновления RemoteViews, но передаёт прежнюю numeric яркость.
+Новый безэффектный refresh/возврат следует из ранее принятого контракта,
+это существенное уточнение прежнего описания KEEP.
+ea126d6decbd136c96adbfb7b798222a11375627 от2015-03-10 намеренно снимает
+dependency редакторов от show_icon: общие widget значения редактируются
+даже при выключенных notification controls. Premium/game gate сохраняется:
+Main может открыть editor, Ok отключён без права; notification preferences
+отключены без права. E32 не открывается заново.
+
+### E09/E12: ползунок и исторические обходы
+
+`J/ui/MainActivity.java:286–326,427–476` различает fromUser и программный
+setProgress/animation; команды идут по changed integer progress до release.
+`mSeekBarTouchInProgress` препятствует Auto animation во время касания.
+b38b286d5b7692b43d69c6f1116185c5918615b6 от2015-01-10 удаляет попытки
+пропускать значения ради отзывчивости: commit прямо говорит, что оптимизации
+не работают как ожидалось. Это не повод восстановить скрытый порог5/even-only.
+540c6d1f от2022-03-09 исправляет отображение внешней manual яркости;
+это история UI, не новое согласование sync.
+
+`MainActivity.java:909–922` сохраняет комментарий о мерцании/предполагаемом IPC lag,
+но текущий прямой вызов Activity только устанавливает manual mode; запись raw
+уже в service. 29f6c24e46c04f2c56cbaf281bb97e30ebb9bf0a от2014-07-17
+переносил positive запись в Activity. 1e409a0f6ae0dca234bf5099e8163af39a29152e
+от2015-01-04 добавлял запись при onPause для issue89;
+79f7d7aeeef7205be37442dc01bda132b9965976 от2015-01-12 её отключает:
+комментарий указывает на вызванный issue103. Точный внешний report этих двух
+issues здесь не получен, не утверждать конкретную модель/полное воспроизведение.
+`DimmerService.java:677–744` также хранит TODO стоимости update widgets на каждом
+slider change и отключённую дополнительную настройку: исторический issue97
+Nexus7 2013 и комментарий о ненадёжности на Galaxy M51. Механизмы не выбраны
+для нового проекта; назначение отзывчивости/совместимости сохранено как evidence.
+
+В `MainActivity.java:522–548` Android9/Nokia8 TA-1004 связан с delayed300ms
+startService после RuntimeException в onResume. 0a41fb8db4bed8abd3b79a24252fc16a77a73752
+от2019-02-19 объясняет попытку исправить повторно открытый issue139.
+Оригиналы из комментария:
+[Bitbucket139](https://bitbucket.org/bmv-2143/smartbrightness/issues/139/mainactivity-crash-not-allowed-to-start),
+[StackOverflow](https://stackoverflow.com/questions/52013545/android-9-0-not-allowed-to-start-service-app-is-in-background-after-onresume/52908525).
+Запросы чтения2026-10-14 не получили содержимое (недоступно/cache miss);
+основание здесь локальный comment/diff, не подтверждение современного Android.
+Не переносить delay300 автоматически; допустимый service launch остаётся feasibility.
+
+Первичный API подтверждает смысл fromUser, но не результат конкретного Legacy
+на устройстве: [SeekBar listener](https://developer.android.com/reference/android/widget/SeekBar.OnSeekBarChangeListener).
+Для нового Compose требуется сохранить пользовательскую семантику,
+а не Android View callback как архитектуру.
+
+### E09/E11/E12/E13: закрытие, скрытие, повторный вход
+
+Preset handler `MainActivity.java:394–405` и Auto `857–873` после отправки
+команды вызывают finish при checked; результат ОС не проверяется.
+Slider/+/- не используют это закрытие. Default false; checkbox и Settings
+используют один pref_close_on_select. Поэтому предложение не закрывать
+панель при отказе — **отличие Legacy**, хотя DEC-007 пока именуется KEEP.
+Скрытие checkbox group не сбрасывает close on select/show icon; Settings
+сохраняет альтернативный доступ к значениям. Это собственная панель BCD,
+не уже удалённый системный shade close.
+
+`MainActivity.java:803–844,1082–1097`, `R/layout/activity_main.xml:256–325`,
+`R/xml/preferences.xml:106–158`: все visibility defaults true;
+третья строка содержит Auto и+/−, parent GONE скрывает их независимо от child.
+Подсказка проверяет slider и три rows, checkbox не учитывается.
+e9f944aac5e3ae8d12199f22e0fd794e36a6a1e5 иb2689c55 от2015-02-16
+намеренно оставляют checkbox отдельно и показывают hint даже при видимой
+checkbox row. Settings icon в верхней части layout вне скрываемых групп.
+
+Manifest `75–115` задаёт singleTask и хранит комментарий о предотвращении
+повторных Activity от notification tap (comment именует старый singleInstance).
+dcc860194cfdcbbadf888f92b428742b02052976 от2015-01-22 выбирает singleTask.
+`Utils.java:88–149` открывает Main через getActivity/NEW_TASK для value widget
+и области открытия панели notification controls; это не preset service intent.
+`MainActivity.java:675–679` заканчивает панель по Back, service этим не stop.
+
+[Первичная документация tasks](https://developer.android.com/guide/components/activities/tasks-and-back-stack)
+уточняет: singleTask доставляет onNewIntent существующему экземпляру и может
+удалить Activity выше него. Нельзя из одного attribute вывести сохранность
+незавершённого editor или отсутствие команд в onResume. Также default Back
+root Activity на Android12+ отличается от ранних версий; здесь сохраняется
+пользовательский выход с панели, конкретный Compose/navigation способ не выбран.
+
+### E38 и текущая подготовленная конфигурация
+
+Legacy `BrightnessControlDimmer/build.gradle:28–40,121–129`: min21,
+compile/target33, Java17; комментарий min21 связывает выбор с MultiDex packaging,
+не доказывает необходимость отказаться от21–25 именно в rewrite.
+Новый `app/build.gradle.kts:36–81`, catalog/wrapper/daemon criteria и
+AGENTS/MODERNIZATION/TESTING/QUALITY подтверждают min26/compile-target37,
+Gradle9.8.0/AGP9.4.1/Kotlin-Compose2.4.20/BOM2026.09.00,
+bytecode17/JDK21. Ничего не обновлялось. Новый выпуск с min26 не поддержит
+21–25; доступность старого выпуска в магазине здесь не обещается.
+Архивный prototype не принимается как архитектура.
+
+`DimmerService.java:677–744`/BrightnessState/BrightnessUtils дают локальную
+цепочку manual/Auto/dim, сетевой ответ в командном пути не найден.
+Это основание offline требования, не отсутствие Billing/Ads/RemoteConfig
+при запуске и не подтверждение будущей реализации на26/37. Тесты нового
+template и Kover не доказывают brightness; FGS/overlay/OEM/migration остаются gaps.
+
+Старые Android tests просмотрены отдельно: `T/MainActivityTest.java:118–157,293–332`
+и `T/ClearPrefsTest.java:457–476`, `T/SettingsActivityTest.java:370–430,531–653`
+проверяют выбранные UI/labels/закрытие, но часть assertions устарела, TODO/fail
+share не исполнялись. Их наличие не доказательство no-command/readback,
+современного lifecycle и работы при отказе.
+
+Источники сохранены, ID/статусы не изменены. После прямого ответа нужен
+согласованный пересмотр описания DEC-007, RULE-009 и editor примеров/связей,
+а не закрытие группы по факту исследования.
