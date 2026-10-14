@@ -45,11 +45,11 @@
 |---|---|---|
 | G01 raw/mode write success, OEM scale/physical screen, external observers | требует дальнейшей проверки | Изолированные реальные устройства; отдельно readback ОС и физический эффект; characterization формул |
 | G02 Overlay params.alpha×Paint alpha, touch31+, system bars, rotation/multiwindow | требует дальнейшей проверки | Реальные окна/касания API26/31/37, OEM; не screenshot вместо luminance |
-| G03 Background/FGS/boot/force-stop/alarm/permission UI target37 | требует дальнейшей проверки | Оценка законного FGS type/Play constraints и platform tests; без обещания always-on |
-| G04 UsageStats latest package vs visible; locked user/excluded restore | требует дальнейшей проверки | Испытания сценариев смены приложений; нельзя утверждать отсутствие leakage по polling |
-| G05 Widgets pending intent identity/config cancel/delete/launcher hosts | требует дальнейшей проверки | Два instances/разные шаги; разные launcher, API37 memory limits |
-| G06 Billing entitlement/signature/legacy migration/ads/RemoteConfig | требует дальнейшей проверки | Продуктовые решения, sandbox store и актуальная compatibility; внешние конфигурации недоступны из исходников |
-| G07 Recovery gesture/first run/pause/Auto stored lifecycle | требует дальнейшей проверки | Событийные characterization и real Android lifecycle; версия тестов может не собираться |
+| G03 Background/FGS/boot/force-stop/alarm/permission UI target37 | Публичные пути оценены2026-10-14; runtime/store не проверены | specialUse кандидат, entry-specific FGS, CE/DE bootstrap, межзагрузочный clock trust и Stop с оставшимися alarms; [ранние проверки](technical-feasibility-assessment.md#9-ранние-проверки-и-критерии-продолжения), без always-on |
+| G04 UsageStats latest package vs visible; locked user/excluded restore | Кандидат UsageEvents исследован; распознавание не испытано | Fixed5 на настоящих устройствах, old events26–28/resumed29+, null/unknown/revoke/multiwindow; отсутствие leakage не доказано polling/fake |
+| G05 Widgets pending intent identity/config cancel/delete/launcher hosts | API/Legacy identities исследованы; launcher upgrade/restore не испытаны | Два instances, старые PendingIntent/Delete, сохранение provider identity, onRestored old/new IDs, RemoteViews memory37 |
+| G06 Billing entitlement/signature/legacy migration/ads/RemoteConfig | Пути миграции/SDK оценены; signed/store проверки впереди | versionCode1 нового template против49 Legacy, app-signing vs upload certificate, два prefs store, неоднозначный IS_PREMIUM, Billing8 history API удалён; accounts/fixtures/реальный restore не проверены |
+| G07 Recovery gesture/first run/pause/Auto stored lifecycle | Событийные риски уточнены; real lifecycle не испытан | Generation/Stop/late expiry/clock/recreation; Screen receiver живой negative сессии. Characterization будущего harness не заменяет Android |
 | G08 Local binary AAR/внешние SDK/исторические APK | требует дальнейшей проверки | Только если будущая задача потребует дополнительных доказательств; не декомпилированы, не объявлены полностью исследованными |
 
 Количество найденных LB не доказывает полноту. Неисследованные бинарные/внешние реализации и порядок реальных событий остаются явно ограниченной областью выводов.

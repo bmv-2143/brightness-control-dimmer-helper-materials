@@ -999,3 +999,30 @@ Min26/compile-target37/bytecode17/JDK21 и подготовленный Kotlin/C
 Ранние открытые статусы выше исторические. Макеты, формы сообщений, launchMode,
 платформенные механизмы и миграция ещё требуют плана/проверок.
 BUG-001–004 открыты; принятие не подтверждает испытания или разрешение реализации.
+
+## Оценка технической реализуемости —2026-10-14
+
+[Полный отчёт](technical-feasibility-assessment.md) выполнен после прямого
+поручения перейти к следующему шагу. Материалы до работы7bfd056; Legacy
+cd7696cd04705fa48a2c115addf98ae6191bfdd9; новый проект83fa6da.
+Проверены актуальные первичные API/FGS/Play/Direct Boot/clock/Billing документы,
+E01/E04/E05/E08/E13–E15/E17–E27/E30–E34/E38 и реальные production callers.
+
+Дополнительные статические наблюдения: новый versionCode1 против Legacy49;
+две группы prefs (default и named Widget), Auto per-ID отдельно от step/opacity;
+четыре provider identities и старые PendingIntent, timestamp каналы без
+сохранённого preferred ID; IS_PREMIUM писал query и hidden taps.
+Legacy Application.onCreate начинает Billing при любом создании процесса,
+boot receiver не directBootAware; timer PendingIntent адресует service.
+Эти цепочки важны до выбора новой архитектуры и не исправлены в Legacy.
+
+Инженерные кандидаты: specialUse с законными entry paths и Play review,
+одно окно с alpha в LayoutParams, отдельный минимальный DE bootstrap,
+generation актуальных операций, UsageEvents вместо DAILY lastTimeUsed.
+Это не выбранный manifest/алгоритм clocks/процедура переноса противоречивых
+каналов или неизвестного права. Каждая рекомендация, первичный источник,
+границы доказательства и соответствующие TEST приведены в отчёте.
+
+G01–G08 и BUG-001–004 не закрыты;30 DEC/48 RULE/62 SCN/71 TEST сохранены.
+Принятые группы не открывались заново, новые пользовательские функции/SDK,
+ветки/архив/Android запуски/платежи/agent work не выполнялись.
