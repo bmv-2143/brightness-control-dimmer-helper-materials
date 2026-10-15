@@ -134,7 +134,8 @@ Feature: Настраиваемые управляющие поверхност�
         | область открытия Main в notice |
 
     # TEST-019 отдельно проверяет stopped/expired session без оживления;
-    # navigation из незавершённого editor ещё требует выбранного решения.
+    # 2026-10-15: навигационный повторный вход сохраняет editor/draft без Save;
+    # командные действия widget/notification выполняют прежние световые команды.
 
   Rule: RULE-014 Controls optional и обязательный notice различаются
     @FEAT-008 @SCN-020
